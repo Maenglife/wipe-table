@@ -1,0 +1,470 @@
+{
+  "name": "Wipe Table",
+  "version": 1,
+  "sets": [
+    "Survival",
+    "Monuments",
+    "Events"
+  ],
+  "cards": [
+    {
+      "id": "sleeping-bag",
+      "name": "Sleeping Bag",
+      "set": "Survival",
+      "cost": 2,
+      "band": "2-3",
+      "types": [
+        "Craft",
+        "Build"
+      ],
+      "icon": "bag",
+      "rules": "Place this on your base as a respawn. If your walls fall, you return here with 1 Wood instead of starting empty. Only one bag per player.",
+      "flavor": "A stained rectangle and a promise you will try again."
+    },
+    {
+      "id": "hunting-bow",
+      "name": "Hunting Bow",
+      "set": "Survival",
+      "cost": 2,
+      "band": "2-3",
+      "types": [
+        "Craft"
+      ],
+      "icon": "bow",
+      "rules": "When you gather, take 1 extra Wood or Cloth. Once per raid you may spend this to deal 1 to a wooden wall instead of a full raid.",
+      "flavor": "Quiet, cheap, and already aimed at something that moves."
+    },
+    {
+      "id": "wooden-door",
+      "name": "Wooden Door",
+      "set": "Survival",
+      "cost": 2,
+      "band": "2-3",
+      "types": [
+        "Build"
+      ],
+      "icon": "door",
+      "rules": "Your first wall. A raid on your base costs 1 extra resource. Replace this later with a metal or armored door; do not stack door bonuses.",
+      "flavor": "It will not last. It only has to last tonight."
+    },
+    {
+      "id": "campfire",
+      "name": "Campfire",
+      "set": "Survival",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Craft"
+      ],
+      "icon": "fire",
+      "rules": "Once per turn, convert 2 Wood into 1 Cooked Food. You may spend Food to ignore a failed gather or a 1-damage hit.",
+      "flavor": "Smoke on the treeline tells everyone you are still here."
+    },
+    {
+      "id": "stone-hatchet",
+      "name": "Stone Hatchet",
+      "set": "Survival",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Craft"
+      ],
+      "icon": "hatchet",
+      "rules": "When you gather, take 1 extra Stone. You may spend a gather to tear down a Barricade or Wooden Door without declaring a raid.",
+      "flavor": "The island is a pile of materials pretending to be a forest."
+    },
+    {
+      "id": "garage-door",
+      "name": "Garage Door",
+      "set": "Survival",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Build"
+      ],
+      "icon": "garage",
+      "rules": "Metal wall. Raids against this door must spend Sulfur or a 5-cost explosive. Counts as your wall for Tool Cupboard range.",
+      "flavor": "A slab of sheet that sounds like a drum when someone knocks."
+    },
+    {
+      "id": "auto-turret",
+      "name": "Auto Turret",
+      "set": "Survival",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Defend",
+        "Craft"
+      ],
+      "icon": "turret",
+      "rules": "When your base is raided, the attacker loses 2 Scrap unless they pay 1 extra raid. Requires Tool Cupboard in play or this card is silent.",
+      "flavor": "It does not care who you were before you crossed the line."
+    },
+    {
+      "id": "recycler",
+      "name": "Recycler",
+      "set": "Survival",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Craft"
+      ],
+      "icon": "recycler",
+      "rules": "Once per turn, convert any 2 resources into 1 Scrap. If a monument in the wipe is Recycler-tagged, you may do this at that monument instead.",
+      "flavor": "Everything the island kills comes back as bolts."
+    },
+    {
+      "id": "tool-cupboard",
+      "name": "Tool Cupboard",
+      "set": "Survival",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Build"
+      ],
+      "icon": "cupboard",
+      "rules": "You own the ground around your base. Other players cannot craft onto your walls. When you place this, unlock 1 blueprint from the wipe for free.",
+      "flavor": "Authorization is just a box of tools and a threat."
+    },
+    {
+      "id": "armored-door",
+      "name": "Armored Door",
+      "set": "Survival",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Build"
+      ],
+      "icon": "armored",
+      "rules": "HQM wall. A raid must spend a 5-cost explosive or a top event to crack this door. Replace a cheaper door; keep only the highest door bonus.",
+      "flavor": "The last sound you want to hear from the other side."
+    },
+    {
+      "id": "timed-charge",
+      "name": "Timed Charge",
+      "set": "Survival",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Raid",
+        "Craft"
+      ],
+      "icon": "charge",
+      "rules": "Spend 1 Sulfur when you play this. Destroy one Build on another player's base or spend it to open a locked monument in the wipe.",
+      "flavor": "Four beeps is plenty of time to regret the angle."
+    },
+    {
+      "id": "high-external",
+      "name": "High External Wall",
+      "set": "Survival",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Build",
+        "Defend"
+      ],
+      "icon": "wall",
+      "rules": "Your compound. Ignore the first raid against you each round. A second raid in the same round treats this as a metal wall.",
+      "flavor": "A ring of stone that makes neighbors into a skyline."
+    },
+    {
+      "id": "workbench-three",
+      "name": "Workbench Three",
+      "set": "Survival",
+      "cost": 6,
+      "band": "top",
+      "types": [
+        "Craft"
+      ],
+      "icon": "workbench",
+      "rules": "Wipe-end crafting. Unlock any two remaining cards in the wipe as blueprints. Those cards cost 1 less for you for the rest of the game.",
+      "flavor": "The island finally lets you stop improvising."
+    },
+    {
+      "id": "explosive-ammo",
+      "name": "Explosive Ammo",
+      "set": "Survival",
+      "cost": 6,
+      "band": "top",
+      "types": [
+        "Raid",
+        "Craft"
+      ],
+      "icon": "ammo",
+      "rules": "Your raids ignore Wooden Door and Garage Door. You still need a 5-cost explosive or this card plus a raid to crack Armored Door.",
+      "flavor": "The argument that goes through the wall."
+    },
+    {
+      "id": "lighthouse",
+      "name": "Lighthouse",
+      "set": "Monuments",
+      "cost": 2,
+      "band": "2-3",
+      "types": [
+        "Monument"
+      ],
+      "icon": "lighthouse",
+      "rules": "Visit to gather 1 Scrap. If you leave without placing a marker, the next visitor takes that scrap instead. Peaceful: you cannot raid the same turn.",
+      "flavor": "A lamp for ships and a beacon for anyone hungry."
+    },
+    {
+      "id": "abandoned-cabins",
+      "name": "Abandoned Cabins",
+      "set": "Monuments",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Monument"
+      ],
+      "icon": "cabins",
+      "rules": "Visit to draw 2 Wood. If you raid this monument, take a random 2-cost blueprint from the wipe instead of the wood.",
+      "flavor": "Mattresses, cans, and someone else's last good night."
+    },
+    {
+      "id": "outpost",
+      "name": "Outpost",
+      "set": "Monuments",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Monument",
+        "Craft"
+      ],
+      "icon": "outpost",
+      "rules": "Spend 3 Scrap here to unlock one blueprint from the wipe. Peaceful vendor: you cannot raid on the same turn you visit.",
+      "flavor": "They will sell you a shovel and still lock the gate."
+    },
+    {
+      "id": "bandit-camp",
+      "name": "Bandit Camp",
+      "set": "Monuments",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Monument"
+      ],
+      "icon": "bandit",
+      "rules": "Pay 1 Scrap and flip a coin. Heads: gain 3 Scrap. Tails: lose 1 Scrap and take 1 damage. You may visit after gathering.",
+      "flavor": "The house always has more guns than you do."
+    },
+    {
+      "id": "airfield",
+      "name": "Airfield",
+      "set": "Monuments",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Monument",
+        "Raid"
+      ],
+      "icon": "airfield",
+      "rules": "A locked crate sits here. Spend 4 or declare a raid to open it: take 3 Scrap and unlock one 4-cost blueprint from the wipe.",
+      "flavor": "Runways, hangars, and a crate that thinks it is treasure."
+    },
+    {
+      "id": "train-yard",
+      "name": "Train Yard",
+      "set": "Monuments",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Monument",
+        "Craft"
+      ],
+      "icon": "train",
+      "rules": "Convert 3 mixed resources into 2 Scrap. If another player is already here, both of you take 1 damage and the converter still resolves.",
+      "flavor": "Rusted cars full of other people's unfinished plans."
+    },
+    {
+      "id": "water-treatment",
+      "name": "Water Treatment",
+      "set": "Monuments",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Monument"
+      ],
+      "icon": "water",
+      "rules": "Visit to take 2 Metal. If another player visits the same round, both take 1 damage and split the metal.",
+      "flavor": "The pumps still work. The pipes remember chemicals."
+    },
+    {
+      "id": "military-tunnels",
+      "name": "Military Tunnels",
+      "set": "Monuments",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Monument",
+        "Raid"
+      ],
+      "icon": "tunnels",
+      "rules": "Spend 2 Food or take 1 damage, then unlock a 5-cost blueprint and take 2 Scrap. Dark: you cannot visit two monuments this turn.",
+      "flavor": "A concrete throat that swallows light and returns sulfur."
+    },
+    {
+      "id": "power-plant",
+      "name": "Power Plant",
+      "set": "Monuments",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Monument"
+      ],
+      "icon": "plant",
+      "rules": "Take 2 Sulfur and leave a hazard token. The next visitor here takes 1 damage, then removes the token.",
+      "flavor": "Heat, fences, and a chimney that never learned to quit."
+    },
+    {
+      "id": "launch-site",
+      "name": "Launch Site",
+      "set": "Monuments",
+      "cost": 7,
+      "band": "top",
+      "types": [
+        "Monument",
+        "Raid"
+      ],
+      "icon": "launch",
+      "rules": "Wipe-end monument. Spend 5 plus a raid to crack the silo. You take 6 Scrap. If Oil Rig, Cargo Ship, or Patrol Helicopter is in the wipe, you may trigger one of them immediately.",
+      "flavor": "A wound in the island that still thinks it is a doorway."
+    },
+    {
+      "id": "supply-drop",
+      "name": "Supply Drop",
+      "set": "Events",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Event"
+      ],
+      "icon": "airdrop",
+      "rules": "At the start of each round, a crate lands on a random monument in the wipe. The first player to visit that monument this round takes 2 Scrap.",
+      "flavor": "The sky still thinks someone out there is coming to help."
+    },
+    {
+      "id": "supply-signal",
+      "name": "Supply Signal",
+      "set": "Events",
+      "cost": 3,
+      "band": "2-3",
+      "types": [
+        "Event",
+        "Craft"
+      ],
+      "icon": "signal",
+      "rules": "Play to call a crate onto your base: take 2 Scrap. Neighbors may raid you this turn without spending their optional raid.",
+      "flavor": "A flare is a dinner bell with better branding."
+    },
+    {
+      "id": "locked-crate",
+      "name": "Locked Crate",
+      "set": "Events",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Event"
+      ],
+      "icon": "crate",
+      "rules": "Place on a random monument. Any player may spend 4 or a raid to open it: 3 Scrap and 1 blueprint. Remove after it opens.",
+      "flavor": "A box that wants a key, a charge, or a very long afternoon."
+    },
+    {
+      "id": "scientist-patrol",
+      "name": "Scientist Patrol",
+      "set": "Events",
+      "cost": 4,
+      "band": "4",
+      "types": [
+        "Event",
+        "Raid"
+      ],
+      "icon": "scientist",
+      "rules": "A roaming fight. Spend 2 combat (raid tokens or a craft with Raid) to take 2 Scrap, or pay 1 Scrap to pass them by.",
+      "flavor": "White coats, bad radios, and no interest in your story."
+    },
+    {
+      "id": "heavy-scientists",
+      "name": "Heavy Scientists",
+      "set": "Events",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Event",
+        "Raid"
+      ],
+      "icon": "heavy",
+      "rules": "Spend a 5-cost raid or 3 combat. Take 3 Scrap and 1 Sulfur. If you fail the spend, take 2 damage and they remain in play.",
+      "flavor": "The island's idea of a neighborhood watch."
+    },
+    {
+      "id": "chinook-crate",
+      "name": "Chinook Crate",
+      "set": "Events",
+      "cost": 5,
+      "band": "5",
+      "types": [
+        "Event"
+      ],
+      "icon": "chinook",
+      "rules": "Lands on a random monument. Two players may contest it this round. The player who spends more raid (ties go to the current player) takes 4 Scrap.",
+      "flavor": "A gift with rotors and a very public drop zone."
+    },
+    {
+      "id": "patrol-helicopter",
+      "name": "Patrol Helicopter",
+      "set": "Events",
+      "cost": 6,
+      "band": "top",
+      "types": [
+        "Event",
+        "Raid"
+      ],
+      "icon": "heli",
+      "rules": "Wipe-end event. The player with the most raids this wipe takes 1 damage. Players may contribute combat; at a combined 5, destroy it and split 5 Scrap.",
+      "flavor": "A circling argument made of steel and searchlights."
+    },
+    {
+      "id": "cargo-ship",
+      "name": "Cargo Ship",
+      "set": "Events",
+      "cost": 7,
+      "band": "top",
+      "types": [
+        "Event",
+        "Raid"
+      ],
+      "icon": "cargo",
+      "rules": "Wipe-end event. Visit two holds in order: pay 3, then pay 5 or a raid. Clear both to take 6 Scrap. You may stop after the first hold for 2 Scrap.",
+      "flavor": "A moving monument that refuses to stay on the map."
+    },
+    {
+      "id": "oil-rig",
+      "name": "Oil Rig",
+      "set": "Events",
+      "cost": 7,
+      "band": "top",
+      "types": [
+        "Event",
+        "Monument"
+      ],
+      "icon": "oil",
+      "rules": "Wipe-end, two stages. Stage 1 costs 4. Stage 2 costs 5 plus a raid. Completing both yields 7 Scrap and unlocks one top blueprint in the wipe.",
+      "flavor": "A factory in the water that pays anyone willing to drown for it."
+    },
+    {
+      "id": "bradley-column",
+      "name": "Bradley Column",
+      "set": "Events",
+      "cost": 8,
+      "band": "top",
+      "types": [
+        "Event",
+        "Raid"
+      ],
+      "icon": "bradley",
+      "rules": "Wipe-end event. Rolls to a monument in the wipe. Destroy it with 2 explosives or a combined 6 combat. The killer takes 8 Scrap. Every other player may join the raid.",
+      "flavor": "When the island decides a monument needs a tank."
+    }
+  ]
+}

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120e0b">
+  <meta name="description" content="Wipe Table picks tonight's 10 survival-island cards from Survival, Monuments, and Events. Unofficial fan project.">
+  <title>Wipe Table — Tonight's ten cards</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23120e0b' width='32' height='32' rx='4'/%3E%3Cpath fill='%23d4782e' d='M6 22h20l-3-12H9z'/%3E%3Ccircle fill='%23e8dcc8' cx='16' cy='10' r='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#wipeHeading">Skip to tonight's wipe</a>
+
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Wipe Table home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28"><rect x="3" y="18" width="26" height="8" rx="1" fill="currentColor" opacity=".35"/><path d="M6 20h20l-2.4-10H8.4z" fill="currentColor"/><circle cx="16" cy="8" r="2.2" fill="currentColor"/></svg>
+      </span>
+      <span>Wipe <em>Table</em></span>
+    </a>
+    <nav aria-label="Main">
+      <span class="nav-current">Wipe builder</span>
+      <button type="button" class="nav-button" id="collectionBtn">Sets <span class="nav-count">3</span></button>
+      <button type="button" class="nav-button" id="rulesBtn">Rules</button>
+      <button type="button" class="nav-button" id="savedBtn"><span aria-hidden="true">◆</span> Saved <span class="nav-count" id="savedCount">0</span></button>
+    </nav>
+  </header>
+
+  <main class="workspace">
+    <aside class="setup-column" aria-label="Wipe settings">
+      <details class="setup-panel" id="setupPanel" open>
+        <summary>
+          <span>
+            <span class="eyebrow">CALL THE WIPE</span>
+            <span class="setup-title">What hits the island.</span>
+          </span>
+          <span class="collapse-indicator" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="setup-content">
+          <p class="setup-intro">Choose how many cards from each set. Ten is a full night.</p>
+          <div class="mix-total" id="totalLine">
+            <strong><span id="totalCount">10</span> cards</strong>
+            <span id="totalWarn">Ready to play</span>
+          </div>
+          <div class="mix-bar" aria-hidden="true">
+            <span id="survivalBar"></span>
+            <span id="monumentsBar"></span>
+            <span id="eventsBar"></span>
+          </div>
+          <fieldset class="set-fields">
+            <legend class="sr-only">Cards from each set</legend>
+            <div class="set-row" data-set="Survival">
+              <span class="set-monogram survival" aria-hidden="true">S</span>
+              <div class="set-name">
+                <label for="survivalCount">Survival</label>
+                <span>Base · gather, craft, hold · <span id="survivalAvailable">0</span></span>
+              </div>
+              <div class="stepper">
+                <button type="button" id="survivalMinus" aria-label="Fewer Survival cards">−</button>
+                <input id="survivalCount" type="number" min="0" max="14" step="1" value="4" inputmode="numeric">
+                <button type="button" id="survivalPlus" aria-label="More Survival cards">+</button>
+              </div>
+            </div>
+            <div class="set-row" data-set="Monuments">
+              <span class="set-monogram monuments" aria-hidden="true">M</span>
+              <div class="set-name">
+                <label for="monumentsCount">Monuments</label>
+                <span>Places on the island · <span id="monumentsAvailable">0</span></span>
+              </div>
+              <div class="stepper">
+                <button type="button" id="monumentsMinus" aria-label="Fewer Monument cards">−</button>
+                <input id="monumentsCount" type="number" min="0" max="10" step="1" value="3" inputmode="numeric">
+                <button type="button" id="monumentsPlus" aria-label="More Monument cards">+</button>
+              </div>
+            </div>
+            <div class="set-row" data-set="Events">
+              <span class="set-monogram events" aria-hidden="true">E</span>
+              <div class="set-name">
+                <label for="eventsCount">Events</label>
+                <span>Heli, cargo, oil, drop · <span id="eventsAvailable">0</span></span>
+              </div>
+              <div class="stepper">
+                <button type="button" id="eventsMinus" aria-label="Fewer Event cards">−</button>
+                <input id="eventsCount" type="number" min="0" max="10" step="1" value="3" inputmode="numeric">
+                <button type="button" id="eventsPlus" aria-label="More Event cards">+</button>
+              </div>
+            </div>
+          </fieldset>
+          <div class="presets">
+            <span>Quick mix</span>
+            <button type="button" id="defaultMix">4 / 3 / 3</button>
+            <button type="button" id="baseMix">Survival only</button>
+          </div>
+          <div class="mode-section">
+            <label class="field-label" for="modeInput">Selection style</label>
+            <select id="modeInput" aria-describedby="modeHelp">
+              <option value="balanced" selected>Balanced costs</option>
+              <option value="random">Pure random</option>
+            </select>
+            <p id="modeHelp" class="help"></p>
+          </div>
+          <details class="advanced">
+            <summary>Advanced <span aria-hidden="true">+</span></summary>
+            <div class="advanced-body">
+              <label class="field-label" for="seedInput">Replay a wipe</label>
+              <p class="help">Same seed, mix, and selection style rebuilds the same ten cards.</p>
+              <div class="seed-row">
+                <input id="seedInput" type="text" placeholder="Enter a seed" autocomplete="off" aria-label="Wipe seed">
+                <button type="button" id="generateBtn" class="small-button">Use seed</button>
+              </div>
+              <label class="check-label">
+                <input type="checkbox" id="customSize">
+                Allow a custom number of cards
+              </label>
+            </div>
+          </details>
+        </div>
+      </details>
+      <div class="generate-wrap">
+        <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
+        <button type="button" class="primary-button" id="rerollBtn" disabled>
+          <span aria-hidden="true">↻</span> New wipe
+        </button>
+        <span class="generate-note">A fresh seed, unless you typed one above.</span>
+      </div>
+      <p class="scope-note">Ten cards. Three sets. No account, no backend — the island is this browser.</p>
+    </aside>
+
+    <section class="wipe-space" aria-labelledby="wipeHeading">
+      <div class="wipe-header">
+        <div>
+          <p class="eyebrow" id="wipeKicker">TONIGHT ON THE ISLAND</p>
+          <h1 id="wipeHeading" tabindex="-1">Tonight's wipe</h1>
+          <p id="statusLine" class="wipe-subtitle" role="status">Heating the workbench…</p>
+        </div>
+        <div class="wipe-actions">
+          <button type="button" id="saveBtn" class="icon-button" disabled><span aria-hidden="true">◆</span> Save</button>
+          <button type="button" id="copyBtn" class="icon-button" disabled><span aria-hidden="true">↗</span> Copy</button>
+        </div>
+      </div>
+      <div id="errorBox" class="error-box" role="alert" hidden></div>
+      <div id="results" hidden>
+        <div class="result-toolbar">
+          <div id="setSummary" class="set-summary"></div>
+          <div class="view-controls">
+            <label class="sr-only" for="sortInput">Sort wipe cards</label>
+            <select id="sortInput">
+              <option value="set">By set</option>
+              <option value="cost">By cost</option>
+              <option value="name">A–Z</option>
+            </select>
+            <div class="view-toggle" role="group" aria-label="View">
+              <button type="button" id="cardsView" aria-pressed="true" aria-label="Card view">▦</button>
+              <button type="button" id="listView" aria-pressed="false" aria-label="List view">☰</button>
+            </div>
+          </div>
+        </div>
+        <div id="cardList" class="card-grid"></div>
+        <div class="wipe-bottom">
+          <p class="view-hint">Select a card for rules, cost, and types.</p>
+          <span class="mode-badge" id="resultMode"></span>
+        </div>
+        <details class="wipe-details">
+          <summary>Wipe details <span aria-hidden="true">+</span></summary>
+          <div class="details-content">
+            <p id="metaLine"></p>
+            <div id="curveBox" class="curve-box"></div>
+            <p id="repairBox" class="help" hidden></p>
+            <p id="policyNote" class="help"></p>
+          </div>
+        </details>
+      </div>
+      <div id="loadingState" class="loading-state">
+        <span class="loading-mark" aria-hidden="true">◈</span>
+        <p>Staking the bag…</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Unofficial fan project. Not affiliated with Facepunch.</span>
+    <span id="catalogSummary">Survival · Monuments · Events</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="cardDialog" class="card-dialog" aria-labelledby="cardDialogTitle">
+    <button type="button" class="dialog-close" data-close="cardDialog" aria-label="Close card details">×</button>
+    <div id="cardDialogBody"></div>
+  </dialog>
+
+  <dialog id="savedDialog" class="shelf-dialog" aria-labelledby="savedTitle">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow">KEEP A GOOD NIGHT</p>
+        <h2 id="savedTitle">Saved wipes</h2>
+        <p class="help">Stored in this browser, on this device. Cap 50.</p>
+      </div>
+      <button type="button" class="dialog-close" data-close="savedDialog" aria-label="Close saved wipes">×</button>
+    </div>
+    <div id="savedList"></div>
+  </dialog>
+
+  <dialog id="collectionDialog" class="shelf-dialog" aria-labelledby="collectionTitle">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow">THE SHELF</p>
+        <h2 id="collectionTitle">Three sets. One island.</h2>
+      </div>
+      <button type="button" class="dialog-close" data-close="collectionDialog" aria-label="Close collection">×</button>
+    </div>
+    <div id="collectionList"></div>
+    <p class="collection-note">This version picks the 10 cards in play tonight. It does not run a digital match, keep accounts, or replace the printed rules sheet.</p>
+  </dialog>
+
+  <dialog id="rulesDialog" class="shelf-dialog rules-dialog" aria-labelledby="rulesTitle">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow">HOW TO PLAY</p>
+        <h2 id="rulesTitle">One wipe. Forty-five minutes.</h2>
+      </div>
+      <button type="button" class="dialog-close" data-close="rulesDialog" aria-label="Close rules">×</button>
+    </div>
+    <div class="rules-body">
+      <p>2–4 players. Generate 10 cards, then play them as the only crafts, monuments, and events on the island. Full sheet: <code>docs/rules.md</code>.</p>
+      <h3>Turn</h3>
+      <ol>
+        <li><strong>Gather</strong> — draw 2 resources (Wood / Stone / Cloth), plus any tool bonuses.</li>
+        <li><strong>Craft</strong> — unlock a wipe card as a blueprint, or play a blueprint onto your base for its cost.</li>
+        <li><strong>Raid</strong> (optional) — hit another player's wall, or a monument printed in the wipe.</li>
+      </ol>
+      <h3>Blueprints</h3>
+      <p>Unlocking a card tucks it onto your strip so later turns are geared, not naked. Cost 2–3 Survival cards may be crafted once without a blueprint. 4+ Survival cards must be unlocked first. Outpost sells unlocks. Tool Cupboard grants one free unlock.</p>
+      <h3>Winning</h3>
+      <p>Most Scrap when a player hits 12, only one base still stands, or eight rounds pass. If the mix is raid-heavy (4+ Raid or Event cards), last base standing wins and Scrap breaks ties.</p>
+      <h3>Cost bands</h3>
+      <p>2–3 wood/stone · 4 metal · 5 sulfur/HQM · 6+ wipe-end events (Bradley, cargo, oil, heli). The randomizer's balanced mode keeps a house curve; it is not an official rule.</p>
+    </div>
+  </dialog>
+
+  <noscript><p class="error-box">Enable JavaScript to generate a wipe.</p></noscript>
+  <script src="catalog.embed.js"></script>
+  <script src="engine.js"></script>
+  <script src="icons.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
