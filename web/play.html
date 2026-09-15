@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120e0b">
+  <meta name="description" content="Two-player hotseat Play for tonight's Wipe Table cards. Unofficial fan project.">
+  <title>Wipe Table — Play</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23120e0b' width='32' height='32' rx='4'/%3E%3Cpath fill='%23d4782e' d='M6 22h20l-3-12H9z'/%3E%3Ccircle fill='%23e8dcc8' cx='16' cy='10' r='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="play-body">
+  <a class="skip-link" href="#playMain">Skip to play</a>
+
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Wipe Table home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28"><rect x="3" y="18" width="26" height="8" rx="1" fill="currentColor" opacity=".35"/><path d="M6 20h20l-2.4-10H8.4z" fill="currentColor"/><circle cx="16" cy="8" r="2.2" fill="currentColor"/></svg>
+      </span>
+      <span>Wipe <em>Table</em></span>
+    </a>
+    <nav aria-label="Main">
+      <a class="nav-button" href="./">Wipe builder</a>
+      <span class="nav-current">Play</span>
+    </nav>
+  </header>
+
+  <main id="playMain" class="play-workspace">
+    <section id="lobby" class="play-lobby" hidden>
+      <p class="eyebrow">HOTSEAT · TWO PLAYERS</p>
+      <h1>Play this wipe</h1>
+      <p class="help" id="lobbyCopy">Pass the browser. Names are optional.</p>
+      <div id="lobbyWipe" class="lobby-wipe"></div>
+      <form id="startForm" class="start-form">
+        <label class="field-label" for="nameOne">Player 1</label>
+        <input id="nameOne" type="text" maxlength="32" placeholder="Player 1" autocomplete="nickname">
+        <label class="field-label" for="nameTwo">Player 2</label>
+        <input id="nameTwo" type="text" maxlength="32" placeholder="Player 2" autocomplete="nickname">
+        <button type="submit" class="primary-button" id="startBtn">Start match</button>
+      </form>
+      <p class="help" id="resumeHint" hidden></p>
+      <p class="help" id="lobbyError" hidden></p>
+    </section>
+
+    <section id="missingWipe" class="play-lobby" hidden>
+      <p class="eyebrow">NO WIPE LOADED</p>
+      <h1>Call the wipe first.</h1>
+      <p class="help">Play needs tonight's 10 cards from the randomizer.</p>
+      <p><a class="primary-button lobby-link" href="./">Open wipe builder</a></p>
+    </section>
+
+    <section id="table" class="play-table" hidden>
+      <div class="play-status">
+        <div>
+          <p class="eyebrow" id="statusKicker">ROUND 1 / 8</p>
+          <h1 id="turnHeading">Player 1 — Gather</h1>
+          <p class="wipe-subtitle" id="statusLine">Starting kit is on the mats.</p>
+        </div>
+        <div class="wipe-actions">
+          <span class="mode-badge" id="seedBadge"></span>
+          <button type="button" id="newMatchBtn" class="icon-button">New match</button>
+        </div>
+      </div>
+
+      <div id="playersRow" class="play-players"></div>
+
+      <section class="play-panel" aria-labelledby="islandHeading">
+        <div class="panel-head">
+          <h2 id="islandHeading">Tonight's ten</h2>
+          <p class="help">Unlock a blueprint, or craft onto your base. Cost is paid from wood / stone / cloth.</p>
+        </div>
+        <div id="island" class="play-island"></div>
+      </section>
+
+      <section class="play-panel play-actions-panel" aria-labelledby="actionsHeading">
+        <div class="panel-head">
+          <h2 id="actionsHeading">Actions</h2>
+          <p class="help" id="actionHint">Gather two resources to start the turn.</p>
+        </div>
+        <div id="gatherBox" class="gather-box">
+          <p class="field-label">Gather 2</p>
+          <div class="gather-picks" id="gatherPicks"></div>
+          <div class="gather-buttons">
+            <button type="button" class="small-button" data-res="wood">Wood</button>
+            <button type="button" class="small-button" data-res="stone">Stone</button>
+            <button type="button" class="small-button" data-res="cloth">Cloth</button>
+            <button type="button" class="small-button" id="gatherUndo">Undo</button>
+          </div>
+          <div class="gather-presets">
+            <button type="button" class="small-button" data-preset="wood,wood">Take 2 wood</button>
+            <button type="button" class="small-button" data-preset="stone,stone">Take 2 stone</button>
+            <button type="button" class="small-button" data-preset="cloth,cloth">Take 2 cloth</button>
+          </div>
+          <button type="button" class="primary-button" id="gatherConfirm">Confirm gather</button>
+          <p class="action-reason" id="gatherReason"></p>
+        </div>
+        <div class="turn-buttons">
+          <button type="button" class="icon-button" id="skipCraftBtn">Skip craft</button>
+          <button type="button" class="icon-button" id="raidBtn">Raid</button>
+          <button type="button" class="icon-button" id="skipRaidBtn">Skip raid</button>
+          <button type="button" class="primary-button" id="endTurnBtn">End turn</button>
+        </div>
+        <p class="action-reason" id="turnReasons"></p>
+      </section>
+
+      <section class="play-panel" aria-labelledby="logHeading">
+        <h2 id="logHeading">Log</h2>
+        <ol id="logList" class="play-log"></ol>
+      </section>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Unofficial fan project. Not affiliated with Facepunch.</span>
+    <span>2-player hotseat · thin slice</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="winnerDialog" class="winner-dialog" aria-labelledby="winnerTitle">
+    <p class="eyebrow">WIPE OVER</p>
+    <h2 id="winnerTitle">Winner</h2>
+    <p id="winnerReason" class="help"></p>
+    <div class="winner-actions">
+      <button type="button" class="primary-button" id="winnerAgain">Play this wipe again</button>
+      <a class="icon-button winner-link" href="./">Back to randomizer</a>
+    </div>
+  </dialog>
+
+  <noscript><p class="error-box">Enable JavaScript to play.</p></noscript>
+  <script src="icons.js"></script>
+  <script src="game.js"></script>
+  <script src="play.js"></script>
+</body>
+</html>
