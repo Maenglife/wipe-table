@@ -599,7 +599,7 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 220, 170, 0.08);
 }
 
-.play-lobby { padding: 28px; max-width: 640px; }
+.play-lobby { padding: 28px; max-width: 640px; margin: 0 auto; }
 .play-lobby h1 { font-size: clamp(2rem, 4vw, 3rem); }
 .start-form { display: grid; gap: 8px; margin-top: 18px; }
 .lobby-wipe {
@@ -665,6 +665,11 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
 }
 
 .play-panel { padding: 16px 18px; margin: 14px 0; }
+.play-actions-panel {
+  position: sticky;
+  bottom: 8px;
+  z-index: 5;
+}
 .play-island {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
