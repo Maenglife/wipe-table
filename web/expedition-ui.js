@@ -229,11 +229,13 @@
       var canMove = zone.move.ok;
       var canRecall = zone.recall.ok;
       btn.disabled = !canMove && !canRecall && !zone.isHere;
-      btn.title = zone.isHere ? "Current zone" : zone.move.reason || zone.recall.reason || "Travel";
+      if (zone.isHere) btn.title = "Current zone";
+      else if (canMove) btn.title = "Walk to " + zone.name;
+      else if (canRecall) btn.title = "Recall to " + zone.name;
+      else btn.title = zone.move.reason || zone.recall.reason || "Cannot travel here";
       btn.addEventListener("click", function () {
         if (zone.isHere) return;
-        if (canRecall && (!canMove || zone.recall.reason)) act({ type: "recall", zoneId: zone.id });
-        else if (canMove) act({ type: "move", zoneId: zone.id });
+        if (canMove) act({ type: "move", zoneId: zone.id });
         else if (canRecall) act({ type: "recall", zoneId: zone.id });
       });
       map.append(btn);
