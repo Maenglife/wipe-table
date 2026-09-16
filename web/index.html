@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#120e0b">
-  <meta name="description" content="Wipe Table picks tonight's 10 survival-island cards from Survival, Monuments, and Events. Unofficial fan project.">
-  <title>Wipe Table — Tonight's ten cards</title>
+  <meta name="description" content="Wipe Table is a solo building-and-expedition game. The 10-card tabletop randomizer remains as a legacy companion. Unofficial fan project.">
+  <title>Wipe Table — The wipe is the game</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23120e0b' width='32' height='32' rx='4'/%3E%3Cpath fill='%23d4782e' d='M6 22h20l-3-12H9z'/%3E%3Ccircle fill='%23e8dcc8' cx='16' cy='10' r='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,8 +23,9 @@
       <span>Wipe <em>Table</em></span>
     </a>
     <nav aria-label="Main">
-      <span class="nav-current">Wipe builder</span>
-      <a class="nav-button" href="play.html" id="navPlay">Play</a>
+      <span class="nav-current">Builder</span>
+      <a class="nav-button nav-emphasis" href="expedition.html">Expedition</a>
+      <a class="nav-button" href="play.html" id="navPlay">Hotseat</a>
       <button type="button" class="nav-button" id="collectionBtn">Sets <span class="nav-count">3</span></button>
       <button type="button" class="nav-button" id="rulesBtn">Rules</button>
       <button type="button" class="nav-button" id="savedBtn"><span aria-hidden="true">◆</span> Saved <span class="nav-count" id="savedCount">0</span></button>
@@ -32,6 +33,19 @@
   </header>
 
   <main class="workspace">
+    <section class="pivot-banner">
+      <div class="pivot-copy">
+        <p class="eyebrow">THE WIPE IS THE GAME</p>
+        <h2>Solo building and expedition.</h2>
+        <p class="help">Drop a 1×1, follow this island’s resources and finds, repair a quiet extraction skiff, and leave when you choose. No PvP. The 10-card table below is the legacy tabletop companion.</p>
+      </div>
+      <div class="pivot-actions">
+        <a class="primary-button" href="expedition.html">Start a new wipe</a>
+        <a class="icon-button" href="expedition.html?seed=wipe-1">Harbor scrap</a>
+        <a class="icon-button" href="expedition.html?seed=wipe-4">Inland ore</a>
+      </div>
+    </section>
+
     <aside class="setup-column" aria-label="Wipe settings">
       <details class="setup-panel" id="setupPanel" open>
         <summary>
@@ -139,7 +153,7 @@
           <p id="statusLine" class="wipe-subtitle" role="status">Heating the workbench…</p>
         </div>
         <div class="wipe-actions">
-          <button type="button" id="playBtn" class="primary-button play-entry" disabled>Play this wipe</button>
+          <button type="button" id="playBtn" class="icon-button play-entry" disabled>Hotseat this wipe</button>
           <button type="button" id="saveBtn" class="icon-button" disabled><span aria-hidden="true">◆</span> Save</button>
           <button type="button" id="copyBtn" class="icon-button" disabled><span aria-hidden="true">↗</span> Copy</button>
         </div>
@@ -216,31 +230,39 @@
       <button type="button" class="dialog-close" data-close="collectionDialog" aria-label="Close collection">×</button>
     </div>
     <div id="collectionList"></div>
-    <p class="collection-note">The builder picks the 10 cards in play tonight. Play is a local 2-player hotseat on those cards. It does not keep accounts or replace the printed rules sheet.</p>
+    <p class="collection-note">The builder still picks 10 cards for the legacy tabletop sheet and the 2-player hotseat. The current game is the solo expedition on <a href="expedition.html">expedition.html</a>.</p>
   </dialog>
 
   <dialog id="rulesDialog" class="shelf-dialog rules-dialog" aria-labelledby="rulesTitle">
     <div class="dialog-heading">
       <div>
         <p class="eyebrow">HOW TO PLAY</p>
-        <h2 id="rulesTitle">One wipe. Forty-five minutes.</h2>
+        <h2 id="rulesTitle">The wipe is the game.</h2>
       </div>
       <button type="button" class="dialog-close" data-close="rulesDialog" aria-label="Close rules">×</button>
     </div>
     <div class="rules-body">
-      <p>2–4 players at the table, or the 2-player digital hotseat from <strong>Play this wipe</strong>. Generate 10 cards, then play them as the only crafts, monuments, and events on the island. Full sheet: <code>docs/rules.md</code>. Thin Play slice: <code>docs/PLAYABLE.md</code>.</p>
-      <h3>Turn</h3>
+      <p>Current game: <strong>solo expedition</strong> — building and a player-triggered extraction, no combat. Open <a href="expedition.html">Expedition</a>. Design note: <code>docs/EXPEDITION.md</code>.</p>
+      <p>Legacy tabletop: 2–4 players from <code>docs/rules.md</code>, or the 2-player hotseat from <strong>Hotseat this wipe</strong>. Those modes still deal 10 cards as crafts, monuments, and events. Thin hotseat: <code>docs/PLAYABLE.md</code>.</p>
+      <h3>Expedition turn</h3>
+      <ol>
+        <li><strong>Move or recall</strong> — walk adjacent zones, or return to a claimed bed.</li>
+        <li><strong>Gather / build / craft</strong> — 1×1 → 1×2 → 2×2, then install what you discovered.</li>
+        <li><strong>Search</strong> — monuments and the wreck are scavenged, never fought.</li>
+        <li><strong>Extract</strong> — assemble the skiff on Wreck Beach when the parts are in.</li>
+      </ol>
+      <h3>Legacy hotseat turn</h3>
       <ol>
         <li><strong>Gather</strong> — draw 2 resources (Wood / Stone / Cloth), plus any tool bonuses.</li>
         <li><strong>Craft</strong> — unlock a wipe card as a blueprint, or play a blueprint onto your base for its cost.</li>
         <li><strong>Raid</strong> (optional) — hit another player's wall, or a monument printed in the wipe.</li>
       </ol>
       <h3>Blueprints</h3>
-      <p>Unlocking a card tucks it onto your strip so later turns are geared, not naked. Cost 2–3 Survival cards may be crafted once without a blueprint. 4+ Survival cards must be unlocked first. Outpost sells unlocks. Tool Cupboard grants one free unlock.</p>
+      <p>In expedition, finds come from searching monuments. In the legacy sheet, unlocking a card tucks it onto your strip. Cost 2–3 Survival cards may be crafted once without a blueprint.</p>
       <h3>Winning</h3>
-      <p>Most Scrap when a player hits 12, only one base still stands, or eight rounds pass. If the mix is raid-heavy (4+ Raid or Event cards), last base standing wins and Scrap breaks ties.</p>
-      <h3>Cost bands</h3>
-      <p>2–3 wood/stone · 4 metal · 5 sulfur/HQM · 6+ wipe-end events (Bradley, cargo, oil, heli). The randomizer's balanced mode keeps a house curve; it is not an official rule.</p>
+      <p>Expedition ends when you choose to leave. Legacy hotseat: most Scrap at 12, last base standing, or eight rounds — raid-heavy mixes prefer last base standing.</p>
+      <h3>Cost bands (legacy randomizer)</h3>
+      <p>2–3 wood/stone · 4 metal · 5 sulfur/HQM · 6+ wipe-end events (Bradley, cargo, oil, heli). Balanced mode is a house curve, not an official rule.</p>
     </div>
   </dialog>
 

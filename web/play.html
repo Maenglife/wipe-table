@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#120e0b">
-  <meta name="description" content="Two-player hotseat Play for tonight's Wipe Table cards. Unofficial fan project.">
-  <title>Wipe Table — Play</title>
+  <meta name="description" content="Legacy 2-player hotseat for tonight's Wipe Table cards. The current game is the solo expedition. Unofficial fan project.">
+  <title>Wipe Table — Legacy hotseat</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23120e0b' width='32' height='32' rx='4'/%3E%3Cpath fill='%23d4782e' d='M6 22h20l-3-12H9z'/%3E%3Ccircle fill='%23e8dcc8' cx='16' cy='10' r='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,16 +23,17 @@
       <span>Wipe <em>Table</em></span>
     </a>
     <nav aria-label="Main">
-      <a class="nav-button" href="./">Wipe builder</a>
-      <span class="nav-current">Play</span>
+      <a class="nav-button nav-emphasis" href="expedition.html">Expedition</a>
+      <a class="nav-button" href="./">Builder</a>
+      <span class="nav-current">Hotseat</span>
     </nav>
   </header>
 
   <main id="playMain" class="play-workspace">
     <section id="lobby" class="play-lobby" hidden>
-      <p class="eyebrow">HOTSEAT · TWO PLAYERS</p>
+      <p class="eyebrow">LEGACY · HOTSEAT · TWO PLAYERS</p>
       <h1>Play this wipe</h1>
-      <p class="help" id="lobbyCopy">Pass the browser. Names are optional.</p>
+      <p class="help" id="lobbyCopy">Thin 2-player house rules on tonight's 10 cards. The current game is the <a href="expedition.html">solo expedition</a>. Names are optional.</p>
       <div id="lobbyWipe" class="lobby-wipe"></div>
       <form id="startForm" class="start-form">
         <label class="field-label" for="nameOne">Player 1</label>
@@ -115,7 +116,7 @@
 
   <footer class="app-footer">
     <span>Unofficial fan project. Not affiliated with Facepunch.</span>
-    <span>2-player hotseat · thin slice</span>
+    <span>Legacy 2-player hotseat · thin slice</span>
   </footer>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

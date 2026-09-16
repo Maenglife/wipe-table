@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120e0b">
+  <meta name="description" content="Solo building-and-expedition wipe: drop a 1×1, follow this island's resources, repair a skiff, and leave. Unofficial fan project.">
+  <title>Wipe Table — Expedition</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23120e0b' width='32' height='32' rx='4'/%3E%3Cpath fill='%23d4782e' d='M6 22h20l-3-12H9z'/%3E%3Ccircle fill='%23e8dcc8' cx='16' cy='10' r='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="play-body expedition-body">
+  <a class="skip-link" href="#expeditionMain">Skip to expedition</a>
+
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Wipe Table home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28"><rect x="3" y="18" width="26" height="8" rx="1" fill="currentColor" opacity=".35"/><path d="M6 20h20l-2.4-10H8.4z" fill="currentColor"/><circle cx="16" cy="8" r="2.2" fill="currentColor"/></svg>
+      </span>
+      <span>Wipe <em>Table</em></span>
+    </a>
+    <nav aria-label="Main">
+      <span class="nav-current">Expedition</span>
+      <a class="nav-button" href="./">Builder</a>
+      <a class="nav-button" href="play.html">Hotseat</a>
+      <button type="button" class="nav-button" id="howBtn">How to play</button>
+    </nav>
+  </header>
+
+  <main id="expeditionMain" class="play-workspace expedition-workspace">
+    <section id="lobby" class="play-lobby expedition-lobby" hidden>
+      <p class="eyebrow">SOLO · NO PVP</p>
+      <h1>The wipe is the game.</h1>
+      <p class="help">One quiet island, a 1×1, and a broken skiff. Geography and finds change how you build. About twenty minutes. Unofficial fan project — not affiliated with Facepunch.</p>
+      <form id="startForm" class="start-form">
+        <label class="field-label" for="seedInput">Wipe seed</label>
+        <input id="seedInput" type="text" maxlength="48" placeholder="Leave blank for a fresh island" autocomplete="off">
+        <div class="demo-seeds" id="demoSeeds"></div>
+        <button type="submit" class="primary-button" id="startBtn">Start this wipe</button>
+      </form>
+      <p class="help" id="resumeHint" hidden></p>
+      <div id="memoryBox" class="memory-box" hidden></div>
+    </section>
+
+    <section id="table" class="expedition-table" hidden>
+      <div class="play-status">
+        <div>
+          <p class="eyebrow" id="statusKicker">DAY 1</p>
+          <h1 id="turnHeading">Shore Camp</h1>
+          <p class="wipe-subtitle" id="statusLine">Drop a 1×1, then follow the island.</p>
+        </div>
+        <div class="wipe-actions">
+          <span class="mode-badge" id="seedBadge"></span>
+          <button type="button" id="newWipeBtn" class="icon-button">New wipe</button>
+        </div>
+      </div>
+
+      <p class="layout-hook" id="layoutHook"></p>
+
+      <section class="play-panel objective-panel" aria-labelledby="objectiveHeading">
+        <div class="panel-head">
+          <h2 id="objectiveHeading">Extraction skiff</h2>
+          <p class="help" id="objectiveHelp">Find the wreck, retrieve parts, prepare fuel, leave when you choose.</p>
+        </div>
+        <div id="objectiveTrack" class="objective-track"></div>
+      </section>
+
+      <div class="expedition-grid">
+        <section class="play-panel" aria-labelledby="mapHeading">
+          <div class="panel-head">
+            <h2 id="mapHeading">Island</h2>
+            <p class="help" id="mapHelp">Click a neighbouring zone to walk. Recalling uses a claimed bed.</p>
+          </div>
+          <div id="islandMap" class="ex-map"></div>
+        </section>
+
+        <section class="play-panel" aria-labelledby="baseHeading">
+          <div class="panel-head">
+            <h2 id="baseHeading">Base</h2>
+            <p class="help">1×1, then 1×2, then 2×2. Rooms hold the stations you actually found.</p>
+          </div>
+          <div id="basePortrait" class="base-portrait"></div>
+          <div id="inventory" class="player-stats"></div>
+          <p class="help" id="kitLine"></p>
+        </section>
+      </div>
+
+      <section class="play-panel play-actions-panel" aria-labelledby="actionsHeading">
+        <div class="panel-head">
+          <h2 id="actionsHeading">Actions</h2>
+          <p class="help" id="actionHint">Four actions make a day.</p>
+        </div>
+        <div id="actionBox" class="action-box"></div>
+        <p class="action-reason" id="turnReasons"></p>
+      </section>
+
+      <section class="play-panel" aria-labelledby="logHeading">
+        <h2 id="logHeading">Log</h2>
+        <ol id="logList" class="play-log"></ol>
+      </section>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Unofficial fan project. Not affiliated with Facepunch.</span>
+    <span>Solo expedition · no combat</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="endDialog" class="winner-dialog end-dialog" aria-labelledby="endTitle">
+    <p class="eyebrow">WIPE OVER</p>
+    <h2 id="endTitle">You left the island</h2>
+    <p id="endReason" class="help"></p>
+    <pre id="endPortrait" class="portrait-ascii"></pre>
+    <div id="endMeta" class="end-meta"></div>
+    <div class="winner-actions">
+      <button type="button" class="primary-button" id="endAgain">Another wipe</button>
+      <a class="icon-button winner-link" href="./">Back to builder</a>
+    </div>
+  </dialog>
+
+  <dialog id="howDialog" class="shelf-dialog rules-dialog" aria-labelledby="howTitle">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow">SOLO MVP</p>
+        <h2 id="howTitle">Gather, build, leave.</h2>
+      </div>
+      <button type="button" class="dialog-close" data-close="howDialog" aria-label="Close how to play">×</button>
+    </div>
+    <div class="rules-body">
+      <p>This is a compact solo game. There is no raid step and no PvP. Full design note: <code>docs/EXPEDITION.md</code>.</p>
+      <h3>Each wipe changes the build</h3>
+      <ul>
+        <li><strong>Island</strong> — three resource layouts on one zone graph.</li>
+        <li><strong>Discoveries</strong> — four blueprints from a pool of six. The layout always includes its featured station.</li>
+        <li><strong>Opportunity</strong> — repair the extraction skiff and choose when to leave.</li>
+      </ul>
+      <h3>A day</h3>
+      <p>Four actions: walk, gather, build, craft, install, search, recall, assemble, or extract. Searching monuments is scavenging, not a fight.</p>
+      <h3>The skiff</h3>
+      <p>Visit Wreck Beach to identify it. Pontoon plate from Train Yard, starter coil from Military Tunnels, fuel kit crafted at a claimed site (1 metal or scrap + 1 wood, or a slower raw pile). Assemble on the beach, then extract.</p>
+      <h3>Demo seeds</h3>
+      <p><code>wipe-1</code> is Harbor scrap (compact recycler). <code>wipe-4</code> is Inland ore (furnace line). <code>wipe-0</code> is Long route (outpost).</p>
+    </div>
+  </dialog>
+
+  <noscript><p class="error-box">Enable JavaScript to play the expedition.</p></noscript>
+  <script src="icons.js"></script>
+  <script src="engine.js"></script>
+  <script src="expedition.js"></script>
+  <script src="expedition-ui.js"></script>
+</body>
+</html>
