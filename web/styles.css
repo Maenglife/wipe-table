@@ -139,6 +139,11 @@ nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   padding: 8px 14px;
   min-height: 42px;
 }
+a.nav-button {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
 .nav-count {
   display: inline-flex;
   min-width: 1.4em;
@@ -305,6 +310,9 @@ select, input[type="text"] { padding: 10px 12px; width: 100%; }
 .primary-button:hover:not(:disabled) { filter: brightness(1.06); }
 .primary-button:disabled { opacity: 0.45; cursor: not-allowed; }
 .scope-note { margin: 0 4px; font-size: 0.82rem; }
+.scope-note a, .collection-note a, .rules-body a {
+  color: var(--gold);
+}
 
 .wipe-space { padding: 22px; min-height: 70vh; }
 .wipe-header, .result-toolbar, .wipe-bottom, .dialog-heading {

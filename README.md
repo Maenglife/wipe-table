@@ -4,6 +4,24 @@ Unofficial tabletop companion for a small survival-island board-game spin-off. I
 
 This is a fan project. It is **not** affiliated with Facepunch.
 
+## Island map (2-player prototype)
+
+A separate mode from the randomizer: Ash and Tide share a small road graph, scavenge chips, plant a cupboard, visit monuments for Workbench 1/2/3, and fight if they land on the same node.
+
+Rules: [`docs/MAP-PLAYABLE.md`](docs/MAP-PLAYABLE.md).
+
+```bash
+python3 -m http.server 43123 --directory web
+```
+
+Windows:
+
+```bash
+python -m http.server 43123 --directory web
+```
+
+Then open `http://127.0.0.1:43123/` for the wipe builder, or `http://127.0.0.1:43123/map.html` for **Play map**. You can also open the HTML files directly. Pass one browser between two players. Progress saves in this browser.
+
 ## Game mapping
 
 Dominion's 10 kingdom piles become this wipe's 10 cards: monuments, crafts, and raid targets in play tonight.
@@ -31,13 +49,7 @@ No package install is required for the table or Play.
 python3 -m http.server 43123 --directory web
 ```
 
-Windows:
-
-```bash
-python -m http.server 43123 --directory web
-```
-
-Then open `http://127.0.0.1:43123/` for the randomizer. You can also open `web/index.html` directly in a browser.
+Then open `http://127.0.0.1:43123/`. You can also open `web/index.html` directly in a browser. **Play map** on that page opens the 2-player island.
 
 **New wipe** draws a fresh seed. Under Advanced, paste a seed and use **Use seed** to replay. Default mix is Survival 4 / Monuments 3 / Events 3. **Survival only** is a 10-card base-set preset.
 
@@ -85,6 +97,7 @@ node cli/wipe.js --mode random --json
 node --test tests/*.test.js
 ```
 
+Covers catalog loading, band assignment, validation, balanced sampling, top-end repair, seeds, map movement, combat math, workbench gates, and win checks.
 Covers catalog loading, band assignment, validation, balanced sampling, top-end repair, seeds, and the 2-player Play engine (`web/game.js`).
 
 ## IP

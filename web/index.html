@@ -24,7 +24,7 @@
     </a>
     <nav aria-label="Main">
       <span class="nav-current">Wipe builder</span>
-      <a class="nav-button" href="play.html" id="navPlay">Play</a>
+      <a class="nav-button" href="map.html">Play map</a>
       <button type="button" class="nav-button" id="collectionBtn">Sets <span class="nav-count">3</span></button>
       <button type="button" class="nav-button" id="rulesBtn">Rules</button>
       <button type="button" class="nav-button" id="savedBtn"><span aria-hidden="true">◆</span> Saved <span class="nav-count" id="savedCount">0</span></button>
@@ -128,7 +128,7 @@
         </button>
         <span class="generate-note">A fresh seed, unless you typed one above.</span>
       </div>
-      <p class="scope-note">Ten cards. Three sets. No account, no backend — the island is this browser.</p>
+      <p class="scope-note">Ten cards. Three sets. No account, no backend — the island is this browser. For a 2-player digital match, <a href="map.html">play the island map</a>.</p>
     </aside>
 
     <section class="wipe-space" aria-labelledby="wipeHeading">
@@ -216,7 +216,7 @@
       <button type="button" class="dialog-close" data-close="collectionDialog" aria-label="Close collection">×</button>
     </div>
     <div id="collectionList"></div>
-    <p class="collection-note">The builder picks the 10 cards in play tonight. Play is a local 2-player hotseat on those cards. It does not keep accounts or replace the printed rules sheet.</p>
+    <p class="collection-note">The builder picks the 10 cards in play tonight. It does not keep accounts. For a 2-player digital island, open Play map.</p>
   </dialog>
 
   <dialog id="rulesDialog" class="shelf-dialog rules-dialog" aria-labelledby="rulesTitle">
@@ -228,7 +228,7 @@
       <button type="button" class="dialog-close" data-close="rulesDialog" aria-label="Close rules">×</button>
     </div>
     <div class="rules-body">
-      <p>2–4 players at the table, or the 2-player digital hotseat from <strong>Play this wipe</strong>. Generate 10 cards, then play them as the only crafts, monuments, and events on the island. Full sheet: <code>docs/rules.md</code>. Thin Play slice: <code>docs/PLAYABLE.md</code>.</p>
+      <p>2–4 players. Generate 10 cards, then play them as the only crafts, monuments, and events on the island. Full sheet: <code>docs/rules.md</code>. A separate 2-player digital board lives under <a href="map.html">Play map</a> (<code>docs/MAP-PLAYABLE.md</code>).</p>
       <h3>Turn</h3>
       <ol>
         <li><strong>Gather</strong> — draw 2 resources (Wood / Stone / Cloth), plus any tool bonuses.</li>
