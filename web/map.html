@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120e0b">
+  <meta name="description" content="Wipe Table map prototype: 2-player hotseat on a hostile island. Unofficial fan project.">
+  <title>Wipe Table — Island map</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23120e0b' width='32' height='32' rx='4'/%3E%3Cpath fill='%23d4782e' d='M6 22h20l-3-12H9z'/%3E%3Ccircle fill='%23e8dcc8' cx='16' cy='10' r='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="map.css">
+</head>
+<body class="map-page">
+  <a class="skip-link" href="#boardHeading">Skip to island</a>
+
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Wipe Table home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28"><rect x="3" y="18" width="26" height="8" rx="1" fill="currentColor" opacity=".35"/><path d="M6 20h20l-2.4-10H8.4z" fill="currentColor"/><circle cx="16" cy="8" r="2.2" fill="currentColor"/></svg>
+      </span>
+      <span>Wipe <em>Table</em></span>
+    </a>
+    <nav aria-label="Main">
+      <a class="nav-button" href="./">Wipe builder</a>
+      <span class="nav-current">Island map</span>
+      <button type="button" class="nav-button" id="rulesBtn">Rules</button>
+      <button type="button" class="nav-button" id="newGameBtn">New game</button>
+    </nav>
+  </header>
+
+  <main class="map-workspace">
+    <section class="board-column" aria-labelledby="boardHeading">
+      <div class="board-header">
+        <div>
+          <p class="eyebrow">HOSTILE ISLAND</p>
+          <h1 id="boardHeading">Pass-and-play map</h1>
+          <p id="turnLine" class="wipe-subtitle" role="status">Loading the island…</p>
+        </div>
+        <div class="turn-pips" id="turnPips" aria-hidden="true"></div>
+      </div>
+      <div id="winBanner" class="win-banner" hidden></div>
+      <div class="board-frame">
+        <svg id="mapSvg" class="island-svg" viewBox="0 0 1000 780" role="img" aria-labelledby="boardHeading">
+          <title>Island road map</title>
+        </svg>
+      </div>
+      <p class="view-hint board-hint">Tap an adjacent node to move. Actions sit in the tray — two per turn.</p>
+    </section>
+
+    <aside class="hud-column" aria-label="Player tray">
+      <div class="hud-card" id="activeCard"></div>
+      <div class="hud-card opponent-card" id="opponentCard"></div>
+      <div class="action-tray" id="actionTray"></div>
+      <div class="hud-card" id="recipeCard"></div>
+      <div class="hud-card" id="inspectCard"></div>
+      <div class="hud-card hand-card">
+        <p class="eyebrow">HAND</p>
+        <div id="handList" class="hand-list"></div>
+      </div>
+      <div class="hud-card log-card">
+        <p class="eyebrow">TABLE LOG</p>
+        <ol id="logList" class="log-list"></ol>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="app-footer">
+    <span>Unofficial fan project. Not affiliated with Facepunch.</span>
+    <span>2 players · local hotseat · this browser only</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div id="handoff" class="handoff" hidden>
+    <div class="handoff-panel">
+      <p class="eyebrow">PASS THE DEVICE</p>
+      <h2 id="handoffTitle">Hand the table over</h2>
+      <p id="handoffBody" class="help">Hide the last hand. The next player should tap ready.</p>
+      <button type="button" class="primary-button" id="handoffBtn">I'm ready</button>
+    </div>
+  </div>
+
+  <dialog id="combatDialog" class="card-dialog combat-dialog" aria-labelledby="combatTitle">
+    <button type="button" class="dialog-close" data-close="combatDialog" aria-label="Close fight">×</button>
+    <div id="combatBody"></div>
+  </dialog>
+
+  <dialog id="rulesDialog" class="shelf-dialog rules-dialog" aria-labelledby="mapRulesTitle">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow">MAP RULES</p>
+        <h2 id="mapRulesTitle">Two actions. One island.</h2>
+      </div>
+      <button type="button" class="dialog-close" data-close="rulesDialog" aria-label="Close rules">×</button>
+    </div>
+    <div class="rules-body">
+      <p>2 players, same browser. Full sheet: <code>docs/MAP-PLAYABLE.md</code>. Cards here are loot and events, not a 10-card kingdom.</p>
+      <h3>Turn</h3>
+      <p>Take <strong>2 actions</strong>: move one road, scavenge (up to 2, carry 5), deposit at your base, build a cupboard on a clearing (2 wood + 1 stone), craft at your base, visit a monument, draw one card, or play a card.</p>
+      <h3>Progression</h3>
+      <p>Beaches start at Workbench 0. Visit <strong>Outpost</strong> for WB1, <strong>Airfield</strong> for WB2, <strong>Launch Site</strong> for WB3. Pay 1 food or 2 resources.</p>
+      <h3>Fight</h3>
+      <p>Ending a move on the other player starts a fight. Attack 1 + gear + d6. Defense 1 + armor + door if you fight on their base + d6. Winner takes 2 resources (or 1 scrap). Loser takes a wound; 3 wounds is a down.</p>
+      <h3>Win</h3>
+      <p>First to 12 scrap, or most scrap after 10 rounds. Three downs with the other player still holding a base also ends it.</p>
+    </div>
+  </dialog>
+
+  <noscript><p class="error-box">Enable JavaScript to play the island map.</p></noscript>
+  <script src="map-game.js"></script>
+  <script src="map-ui.js"></script>
+</body>
+</html>
