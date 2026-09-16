@@ -172,6 +172,7 @@
       if (legal["move:" + node.id]) group.classList.add("is-legal");
 
       group.appendChild(svgEl("circle", { class: "node-halo", cx: node.x, cy: node.y, r: "42" }));
+      group.appendChild(svgEl("circle", { class: "node-hit", cx: node.x, cy: node.y, r: "36", fill: "transparent" }));
       group.appendChild(svgEl("circle", { class: "node-pad", cx: node.x, cy: node.y, r: "28" }));
       group.appendChild(iconFor(node));
 

@@ -286,6 +286,9 @@ a.nav-button {
   place-items: center;
   padding: 24px;
 }
+.handoff[hidden] {
+  display: none !important;
+}
 .handoff-panel {
   width: min(440px, 100%);
   background: #16110e;
