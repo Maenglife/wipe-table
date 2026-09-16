@@ -34,7 +34,7 @@
 
   var MAP_NODES = [
     { id: "north-beach", name: "North Beach", type: "beach", spawn: 0, x: 500, y: 72, stock: { food: 1, wood: 1 } },
-    { id: "wood-grove", name: "Wood Grove", type: "resource", x: 318, y: 158, stock: { wood: 4 } },
+    { id: "wood-grove", name: "Wood Grove", type: "resource", x: 318, y: 158, stock: { wood: 4, stone: 1 } },
     { id: "scrap-heap", name: "Scrap Heap", type: "resource", x: 682, y: 158, stock: { metal: 2, cloth: 2, scrap: 1 } },
     { id: "west-clearing", name: "West Clearing", type: "clearing", x: 168, y: 278, stock: {} },
     { id: "outpost", name: "Outpost", type: "monument", monument: "outpost", wb: 1, x: 500, y: 252, stock: { cloth: 1 } },
@@ -626,13 +626,19 @@
     var take = emptyBag();
     var room = CARRY_LIMIT - bagTotal(player.carry);
     var left = Math.min(maxTake, room);
-    RESOURCES.forEach(function (r) {
-      while (left > 0 && (stock[r] || 0) > 0) {
-        take[r] += 1;
-        left -= 1;
-        stock[r] -= 1;
-      }
-    });
+    while (left > 0 && bagHasAnything(stock)) {
+      var progressed = false;
+      RESOURCES.forEach(function (r) {
+        if (left <= 0) return;
+        if ((stock[r] || 0) > 0) {
+          take[r] += 1;
+          stock[r] -= 1;
+          left -= 1;
+          progressed = true;
+        }
+      });
+      if (!progressed) break;
+    }
     state.stocks[player.node] = stock;
     return take;
   }

@@ -86,8 +86,10 @@ describe("scavenge, deposit, and build", () => {
     const state = start();
     game.applyAction(state, { type: "move", to: "wood-grove" });
     game.applyAction(state, { type: "scavenge" });
-    assert.equal(state.players[0].carry.wood, 3);
-    assert.ok(state.stocks["wood-grove"].wood <= 2);
+    assert.equal(game.bagTotal(state.players[0].carry), 3);
+    assert.equal(state.players[0].carry.wood, 2);
+    assert.equal(state.players[0].carry.stone, 1);
+    assert.ok(state.stocks["wood-grove"].wood <= 3);
   });
 
   it("respects the carry limit of 5", () => {
