@@ -9,6 +9,7 @@
     { name: "Events", key: "events", note: "Pressure from the sky and shore — drops, heli, cargo, oil, Bradley." },
   ];
   var STORAGE_KEY = "wipe-table.saved.v1";
+  var PENDING_PLAY_KEY = "wipe-table.pending-wipe.v1";
   var cards = [];
   var current = null;
   var saved = [];
@@ -192,6 +193,7 @@
         : "House preference: at least two cards in each band (2–3, 4, and 5). Three or more exact-5 cards with no top event swap one 5 for a 6+/event from the same set when possible.";
     $("copyBtn").disabled = false;
     $("saveBtn").disabled = false;
+    $("playBtn").disabled = false;
     updateSaveButton();
     renderCards();
     updateTotal();
@@ -327,7 +329,7 @@
       item.append(make("p", "help", engine.modeLabel(entry.mode) + " · " + restored.length + " cards"));
       item.append(make("p", "", restored.map(function (c) { return c.name; }).join(" · ")));
       var actions = make("div", "saved-item-actions");
-      var open = make("button", "saved-open", "Play this wipe");
+      var open = make("button", "saved-open", "Open");
       var remove = make("button", "saved-remove", "Remove");
       open.addEventListener("click", function () {
         if (restored.length !== entry.ids.length || new Set(entry.ids).size !== entry.ids.length) {
@@ -363,6 +365,30 @@
       item.append(actions);
       $("savedList").append(item);
     });
+  }
+
+  function stashCurrentWipe() {
+    if (!current) return false;
+    try {
+      localStorage.setItem(
+        PENDING_PLAY_KEY,
+        JSON.stringify({
+          wipe: current.wipe,
+          seed: current.seed,
+          setCounts: current.setCounts,
+          meta: current.meta,
+        })
+      );
+      return true;
+    } catch (_) {
+      toast("This browser can't start Play right now.");
+      return false;
+    }
+  }
+
+  function playCurrent() {
+    if (!stashCurrentWipe()) return;
+    window.location.href = "play.html?new=1";
   }
 
   function copyCurrent() {
@@ -429,6 +455,10 @@
     $("cardsView").addEventListener("click", function () { view = "cards"; renderCards(); });
     $("listView").addEventListener("click", function () { view = "list"; renderCards(); });
     $("saveBtn").addEventListener("click", saveCurrent);
+    $("playBtn").addEventListener("click", playCurrent);
+    $("navPlay").addEventListener("click", function () {
+      stashCurrentWipe();
+    });
     $("copyBtn").addEventListener("click", copyCurrent);
     $("savedBtn").addEventListener("click", function () { renderSaved(); $("savedDialog").showModal(); });
     $("collectionBtn").addEventListener("click", function () { renderCollection(); $("collectionDialog").showModal(); });
