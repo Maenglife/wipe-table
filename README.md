@@ -39,11 +39,11 @@ Sets:
 2. **Monuments** — airfield, launch site, military tunnels, outpost, bandit camp, and similar
 3. **Events** — heli, cargo, oil, Bradley, airdrop
 
-How those 10 cards actually play is in [`docs/rules.md`](docs/rules.md): 2–4 players, about 45 minutes, one wipe.
+How those 10 cards actually play on the table is in [`docs/rules.md`](docs/rules.md): 2–4 players, about 45 minutes, one wipe. The digital 2-player hotseat is the thinner house rules in [`docs/PLAYABLE.md`](docs/PLAYABLE.md).
 
 ## Open the web UI
 
-No package install is required for the table.
+No package install is required for the table or Play.
 
 ```bash
 python3 -m http.server 43123 --directory web
@@ -52,6 +52,12 @@ python3 -m http.server 43123 --directory web
 Then open `http://127.0.0.1:43123/`. You can also open `web/index.html` directly in a browser. **Play map** on that page opens the 2-player island.
 
 **New wipe** draws a fresh seed. Under Advanced, paste a seed and use **Use seed** to replay. Default mix is Survival 4 / Monuments 3 / Events 3. **Survival only** is a 10-card base-set preset.
+
+## Play this wipe
+
+After the table shows tonight's cards, click **Play this wipe**. That opens `web/play.html`: a local 2-player hotseat on those cards (names optional). Refresh resumes a mid-game match from this browser. Direct link: `http://127.0.0.1:43123/play.html`.
+
+Play is a thin slice — gather, one craft, one raid, eight rounds — not the full sheet in `docs/rules.md`.
 
 ## Catalog and engine
 
@@ -92,6 +98,7 @@ node --test tests/*.test.js
 ```
 
 Covers catalog loading, band assignment, validation, balanced sampling, top-end repair, seeds, map movement, combat math, workbench gates, and win checks.
+Covers catalog loading, band assignment, validation, balanced sampling, top-end repair, seeds, and the 2-player Play engine (`web/game.js`).
 
 ## IP
 
