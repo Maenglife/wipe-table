@@ -1,4 +1,6 @@
-# Playable thin slice (2-player hotseat)
+# Playable thin slice (2-player hotseat) — legacy
+
+> **Legacy slice.** The current game is the solo building-and-expedition wipe in [`EXPEDITION.md`](EXPEDITION.md) and `web/expedition.html`. This sheet still describes the digital 2-player hotseat on the 10-card randomizer.
 
 House rules for the digital Play mode. This is narrower than [`rules.md`](rules.md): no monument visits, no event prompts, and no card text beyond **set**, **cost**, and **types**.
 

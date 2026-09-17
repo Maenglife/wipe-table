@@ -1,56 +1,41 @@
 # Wipe Table
 
-Unofficial tabletop companion for a small survival-island board-game spin-off. It picks tonight's **10 wipe cards** from three owned sets, with an optional balanced cost curve, and shows them on a web table.
-
-This is a fan project. It is **not** affiliated with Facepunch.
-
-## Game mapping
-
-Dominion's 10 kingdom piles become this wipe's 10 cards: monuments, crafts, and raid targets in play tonight.
-
-| Band | Cost | On the island |
-| --- | --- | --- |
-| Early | 2–3 | Wood / stone — sleeping bag, bow, wooden door |
-| Mid | 4 | Metal — garage door, turret, recycler |
-| Late | 5 | Sulfur / HQM — timed charge, armored door |
-| Top | 6+ | Wipe-end events — Bradley, cargo, oil, heli |
-
-Sets:
-
-1. **Survival** (base) — gather, craft, build, defend
-2. **Monuments** — airfield, launch site, military tunnels, outpost, bandit camp, and similar
-3. **Events** — heli, cargo, oil, Bradley, airdrop
-
-How those 10 cards actually play on the table is in [`docs/rules.md`](docs/rules.md): 2–4 players, about 45 minutes, one wipe. The digital 2-player hotseat is the thinner house rules in [`docs/PLAYABLE.md`](docs/PLAYABLE.md).
-
-## Open the web UI
-
-No package install is required for the table or Play.
-
 ```bash
 python3 -m http.server 43123 --directory web
 ```
 
-Windows:
+Open http://127.0.0.1:43123/ and **Play the expedition**. Unofficial fan project — not Facepunch.
 
-```bash
-python -m http.server 43123 --directory web
-```
+## What a wipe is
 
-Then open `http://127.0.0.1:43123/` for the randomizer. You can also open `web/index.html` directly in a browser.
+About 20–30 minutes. **No attacks and no PvP.** You start with almost nothing on Shore Camp.
 
-**New wipe** draws a fresh seed. Under Advanced, paste a seed and use **Use seed** to replay. Default mix is Survival 4 / Monuments 3 / Events 3. **Survival only** is a 10-card base-set preset.
+1. Drop a **1×1**. Extra rooms (1×2 / 2×2) are optional comfort — extract never waits on a bigger shack.
+2. Gather the nodes this layout actually placed.
+3. Search Train Yard and Military Tunnels for blueprints and boat parts (scavenging, not combat).
+4. Craft and install what you discovered — furnace, recycler, cupboard, hatchet, workbench, storage.
+5. Identify the broken extraction skiff on Wreck Beach, assemble it when the pontoon, coil, and fuel kit are in, and **choose** when to extract.
 
-## Play this wipe
+The end screen keeps a portrait of the base, the route you walked, and the discoveries you made. The island resets; memory stays on this device. Persistent unlocks, if they land later, should add future variety rather than starting power.
 
-After the table shows tonight's cards, click **Play this wipe**. That opens `web/play.html`: a local 2-player hotseat on those cards (names optional). Refresh resumes a mid-game match from this browser. Direct link: `http://127.0.0.1:43123/play.html`.
+Design note: [`docs/EXPEDITION.md`](docs/EXPEDITION.md).
 
-Play is a thin slice — gather, one craft, one raid, eight rounds — not the full sheet in `docs/rules.md`.
+## Legacy slices
 
-## Catalog and engine
+The original product was a Dominion-style **10-card tabletop companion** plus a thin 2-player hotseat. Those still ship:
 
-- Canonical catalog: `data/catalog.json` (34 original cards)
+- Randomizer: home page, folded **Legacy tabletop companion** (`web/index.html`)
+- Hotseat: `web/play.html` after **Hotseat this wipe**
+- Tabletop sheet: [`docs/rules.md`](docs/rules.md)
+- Hotseat house rules: [`docs/PLAYABLE.md`](docs/PLAYABLE.md)
+
+They are marked as prior/legacy. Expedition does not use raid math.
+
+## Catalog and engines
+
+- Canonical card catalog: `data/catalog.json` (legacy randomizer)
 - Sampling engine (no DOM): `web/engine.js`
+- Expedition engine (no DOM): `web/expedition.js`
 - Browser embed of the catalog: `web/catalog.embed.js`
 
 After editing the JSON:
@@ -60,23 +45,17 @@ node tools/embed-catalog.js
 node tools/embed-catalog.js --check
 ```
 
-Balanced mode (house preference, not an official rule):
-
-- at least 2 cards in the 2–3 band
-- at least 2 costing 4
-- at least 2 costing 5
-- if 3+ cards are exact-5 and none are top (6+/event), replace one 5 with a random eligible top card from the same set if possible
-
-Counts are validated before RNG. Totals other than 10 need the custom-size checkbox. Balanced needs at least 6 cards.
-
 ## CLI
 
 Node 18+:
 
 ```bash
+node cli/expedition.js
+node cli/expedition.js --seed wipe-1
+node cli/expedition.js --seed wipe-4 --json
+
 node cli/wipe.js
 node cli/wipe.js --set survival=4 --set monuments=3 --set events=3 --mode balanced --seed 17
-node cli/wipe.js --mode random --json
 ```
 
 ## Tests
@@ -85,8 +64,8 @@ node cli/wipe.js --mode random --json
 node --test tests/*.test.js
 ```
 
-Covers catalog loading, band assignment, validation, balanced sampling, top-end repair, seeds, and the 2-player Play engine (`web/game.js`).
+Covers catalog sampling, the legacy hotseat (`web/game.js`), seeded expedition generation, build progression, and extraction end conditions (`web/expedition.js`).
 
 ## IP
 
-Wipe Table is an unofficial fan project and is not affiliated with Facepunch. Cards use recognizable survival-island language because that is the point of staying in the universe. Rules text and stencil card art are original. Do not treat this as an official product.
+Wipe Table is an unofficial fan project and is not affiliated with Facepunch. It uses recognizable survival-island language because that is the point of staying in the universe. Rules text, stencil card art, and the expedition portrait are original. Do not treat this as an official product.

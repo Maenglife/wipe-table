@@ -1,4 +1,6 @@
-# Wipe Table — one-page rules (v0)
+# Wipe Table — one-page rules (v0, legacy tabletop)
+
+> **Legacy slice.** These 2–4 player tabletop rules belong to the original 10-card companion. The current product is a solo expedition: [`EXPEDITION.md`](EXPEDITION.md).
 
 A 2–4 player game about one night on a hostile survival island. One sitting, about 45 minutes. You are not simulating a video game: you are drafting a wipe, then playing the table that the randomizer dealt.
 

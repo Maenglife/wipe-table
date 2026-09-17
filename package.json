@@ -2,12 +2,13 @@
   "name": "wipe-table",
   "version": "1.0.0",
   "private": true,
-  "description": "Unofficial tabletop companion that randomizes tonight's 10 wipe cards.",
+  "description": "Unofficial solo building-and-expedition wipe. Legacy 10-card tabletop companion still included.",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "embed": "node tools/embed-catalog.js",
     "embed:check": "node tools/embed-catalog.js --check",
     "wipe": "node cli/wipe.js",
+    "expedition": "node cli/expedition.js",
     "serve": "python3 -m http.server 43123 --directory web"
   }
 }
