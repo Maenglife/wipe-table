@@ -157,9 +157,8 @@
       id: "ridge-ore",
       name: "Inland ore",
       featured: "furnace",
-      hook: "The richest ore sits inland. Expand the shack into a furnace line.",
-      contrast:
-        "This wipe rewarded a furnace-heavy base with storage and processing — you hauled ore home.",
+      hook: "The richest ore sits inland. Put a furnace at camp and haul the ridge home.",
+      contrast: "This wipe rewarded a furnace at home and ridge hauls — you smelted what you walked.",
       monuments: { "train-yard": "woods", "military-tunnels": "far" },
       nodes: {
         camp: { wood: 2 },
@@ -188,6 +187,51 @@
       },
     },
   ];
+
+  var SKIFF_PARTS = [
+    { id: "pontoon", label: "pontoon plate", hint: "Train Yard" },
+    { id: "coil", label: "starter coil", hint: "Military Tunnels" },
+    { id: "fuel", label: "fuel kit", hint: "prepare at home" },
+  ];
+
+  function missingSkiffParts(boat) {
+    var parts = (boat && boat.parts) || {};
+    return SKIFF_PARTS.filter(function (part) {
+      return !parts[part.id];
+    });
+  }
+
+  function formatMissingParts(missing, withHint) {
+    return missing
+      .map(function (part) {
+        return withHint && part.hint ? part.label + " (" + part.hint + ")" : part.label;
+      })
+      .join(", ");
+  }
+
+  function missingPartsClause(boat) {
+    var missing = missingSkiffParts(boat);
+    if (!missing.length) return "";
+    return "Missing: " + formatMissingParts(missing, true);
+  }
+
+  function skiffIdentifyCopy(boat) {
+    var clause = missingPartsClause(boat);
+    if (!clause) return "Identified the extraction skiff — parts on you; assemble when ready.";
+    return "Identified the extraction skiff. " + clause + ".";
+  }
+
+  function skiffStatusCopy(boat) {
+    var clause = missingPartsClause(boat);
+    if (!clause) return "Identified — parts on you; assemble when ready.";
+    return "Identified. " + clause + ".";
+  }
+
+  function skiffAssembleReason(boat) {
+    var missing = missingSkiffParts(boat);
+    if (!missing.length) return "";
+    return "Still need: " + formatMissingParts(missing, false) + ".";
+  }
 
   var STATION_GLYPH = {
     bag: "B",
@@ -642,7 +686,7 @@
     if (state.ended) return { ok: false, reason: "This wipe is already over." };
     var loc = state.player.location;
     if (loc === "wreck") {
-      if (state.boat.seen) return { ok: false, reason: "The skiff is already identified. Bring parts back here." };
+      if (state.boat.seen) return { ok: false, reason: skiffStatusCopy(state.boat) };
       return { ok: true, reason: "", target: "wreck" };
     }
     var monumentId = state.wipe.zones[loc].monument;
@@ -655,11 +699,8 @@
     if (state.player.location !== "wreck") return { ok: false, reason: "Assemble the skiff on Wreck Beach." };
     if (!state.boat.seen) return { ok: false, reason: "Search the wreck so you know what to repair." };
     if (state.boat.assembled) return { ok: false, reason: "The skiff is already assembled." };
-    var missing = [];
-    if (!state.boat.parts.pontoon) missing.push("pontoon plate");
-    if (!state.boat.parts.coil) missing.push("starter coil");
-    if (!state.boat.parts.fuel) missing.push("fuel kit");
-    if (missing.length) return { ok: false, reason: "Still need: " + missing.join(", ") + "." };
+    var need = skiffAssembleReason(state.boat);
+    if (need) return { ok: false, reason: need };
     return { ok: true, reason: "" };
   }
 
@@ -812,10 +853,7 @@
     if (loc === "wreck") {
       state.boat.seen = true;
       noteVisit(state, loc);
-      spendAction(
-        state,
-        "Identified the extraction skiff. Missing: pontoon plate (Train Yard), starter coil (Military Tunnels), and a fuel kit you prepare at home."
-      );
+      spendAction(state, skiffIdentifyCopy(state.boat));
       return;
     }
     var monumentId = state.wipe.zones[loc].monument;
@@ -1024,7 +1062,12 @@
       revealed: state.player.revealed.map(function (id) {
         return { id: id, name: BLUEPRINTS[id].name, icon: BLUEPRINTS[id].icon };
       }),
-      boat: clone(state.boat),
+      boat: (function () {
+        var boat = clone(state.boat);
+        boat.missing = missingSkiffParts(state.boat);
+        boat.status = skiffStatusCopy(state.boat);
+        return boat;
+      })(),
       base: clone(state.base),
       portrait: portraitLines(state).join("\n"),
       route: state.route.slice(),
@@ -1109,8 +1152,13 @@
     DISCOVERY_POOL: DISCOVERY_POOL,
     LAYOUTS: LAYOUTS,
     MONUMENTS: MONUMENTS,
+    SKIFF_PARTS: SKIFF_PARTS,
     ZONE_META: ZONE_META,
     ADJACENT: ADJACENT,
+    missingSkiffParts: missingSkiffParts,
+    skiffIdentifyCopy: skiffIdentifyCopy,
+    skiffStatusCopy: skiffStatusCopy,
+    skiffAssembleReason: skiffAssembleReason,
     generateWipe: generateWipe,
     createGame: createGame,
     applyAction: applyAction,

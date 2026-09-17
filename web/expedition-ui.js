@@ -8,7 +8,7 @@
   var toastTimer;
   var DEMO = [
     { seed: "wipe-1", label: "Harbor scrap", note: "Components by Train Yard — stay small, recycle." },
-    { seed: "wipe-4", label: "Inland ore", note: "Rich ore on the ridge — furnace and storage." },
+    { seed: "wipe-4", label: "Inland ore", note: "Rich ore on the ridge — furnace at camp, haul inland." },
     { seed: "wipe-0", label: "Long route", note: "Monuments far apart — small home, far outpost." },
   ];
 
@@ -253,7 +253,7 @@
 
   function renderObjective(view) {
     $("objectiveHelp").textContent = view.boat.seen
-      ? "Parts in hand, then assemble on Wreck Beach. You choose when to leave."
+      ? view.boat.status
       : "Walk to Wreck Beach and search the ribs to identify the boat.";
     var track = $("objectiveTrack");
     track.replaceChildren();

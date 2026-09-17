@@ -17,7 +17,7 @@ Target sitting: about 20–30 minutes, player-triggered ending.
 Three knobs, all of which change **how you build**, not only how the map looks.
 
 1. **Island** — where wood, ore, and components sit, which ground is worth claiming, and where the two monuments stand.
-2. **Discoveries** — a handful of blueprints. You start knowing almost nothing. Finds open a furnace line, a recycling bench, an outpost claim, and similar.
+2. **Discoveries** — a handful of blueprints. You start knowing almost nothing. Finds open a furnace, a recycling bench, an outpost claim, and similar.
 3. **Opportunity** — one final project. In the MVP that project is a **broken extraction skiff** on Wreck Beach. Find the missing parts, prepare a fuel kit at home, assemble the boat, and choose when to leave.
 
 The island resets next wipe. Memory of how you built stays (journal only). Persistent unlocks, if added later, should add *future variety*, not starting power.
@@ -29,10 +29,10 @@ The island resets next wipe. Memory of how you built stays (journal only). Persi
 - **Two** monuments: Train Yard and Military Tunnels.
 - A **handful** of useful blueprints (six in the pool, four present each wipe).
 - **One** objective: repair and launch the skiff.
-- Opening progression: **1×1 → 1×2 → 2×2**, then rooms fill with stations you actually found.
+- Optional extra rooms: **1×1 → 1×2 → 2×2**. Extract does not wait on expand.
 - No attacks, no scientists, no raid token.
 
-Success criterion: play two seeds and point at a concrete difference — for example “last time I expanded for production; this time I stayed small and walked for parts.”
+Success criterion: play two seeds and point at a concrete difference — for example “last time I recycled beside Train Yard; this time I hauled ridge ore to a furnace at camp.”
 
 ## The three layouts
 
@@ -41,7 +41,7 @@ The zone graph is shared. Only nodes, monument seats, and the featured blueprint
 | Id | Name | Geography | Featured find | Build response |
 | --- | --- | --- | --- | --- |
 | `harbor-scrap` | Harbor scrap | Components stacked on the Industrial Shelf beside Train Yard | Recycler | Compact recycling workshop; you may never need a 2×2 |
-| `ridge-ore` | Inland ore | Rich ore on the ridge and far spine | Furnace | Furnace-heavy home with storage / processing rooms |
+| `ridge-ore` | Inland ore | Rich ore on the ridge and far spine | Furnace | Furnace at camp; haul ore home from the ridge |
 | `long-shore` | Long route | Both monuments on a long walk | Tool Cupboard | Small main base plus an expedition outpost and bag-recall |
 
 Seeded generation always includes the featured blueprint, then three more from the remaining pool. Long-route wipes also keep at least one processor (furnace or recycler) so the skiff can be fueled without a soft lock.

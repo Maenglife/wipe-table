@@ -27,16 +27,16 @@ Demo seeds (also on the lobby):
 | Seed | Layout | What it asks you to build |
 | --- | --- | --- |
 | `wipe-1` | Harbor scrap | Compact recycling workshop — components sit on the Industrial Shelf beside Train Yard |
-| `wipe-4` | Inland ore | Furnace-heavy home — rich ore on the ridge and far spine |
+| `wipe-4` | Inland ore | Furnace at camp — haul rich ore from the ridge and far spine |
 | `wipe-0` | Long route | Small main base + expedition outpost — both monuments on a long walk |
 
-Play two of those and you should be able to point at a concrete difference: last time you expanded for production; this time you stayed small and invested in the walk.
+Play two of those and you should be able to point at a concrete difference: last time you recycled at a compact 1×1; this time you hauled ridge ore to a furnace at camp.
 
 ## What a wipe is
 
 About 20–30 minutes. **No attacks and no PvP.** You start with almost nothing on Shore Camp.
 
-1. Drop a **1×1**, then maybe a **1×2** or **2×2** if the island asks for production.
+1. Drop a **1×1**. Extra rooms (1×2 / 2×2) are optional comfort — extract never waits on a bigger shack.
 2. Gather the nodes this layout actually placed.
 3. Search Train Yard and Military Tunnels for blueprints and boat parts (scavenging, not combat).
 4. Craft and install what you discovered — furnace, recycler, cupboard, hatchet, workbench, storage.

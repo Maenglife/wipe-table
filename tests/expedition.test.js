@@ -155,6 +155,10 @@ describe("wipe generation", () => {
     assert.ok(wipe.zones.ridge.nodes.ore >= 3);
     assert.equal(wipe.zones.far.monument, "military-tunnels");
     assert.equal(wipe.featured, "furnace");
+    assert.doesNotMatch(wipe.hook, /expand|furnace line|furnace-line/i);
+    assert.doesNotMatch(wipe.contrast, /expand|furnace line|furnace-line|furnace-heavy/i);
+    assert.match(wipe.hook, /furnace/i);
+    assert.match(wipe.hook, /ridge|inland|haul/i);
   });
 
   it("seats both monuments far apart on long-shore and keeps a processor", () => {
@@ -272,13 +276,17 @@ describe("end to end extraction", () => {
     assert.match(state.ended.contrast, /recycling workshop/i);
   });
 
-  it("completes ridge-ore as a furnace line", () => {
+  it("completes ridge-ore on a 1×1 furnace at camp", () => {
     const state = runScript(expedition.createGame({ seed: seedFor("ridge-ore") }), SCRIPTS["ridge-ore"]);
     assert.ok(state.ended);
     assert.equal(state.ended.layoutId, "ridge-ore");
+    assert.equal(state.base.camp.shape, "1x1");
+    assert.equal(state.base.camp.rooms.length, 1);
     assert.equal(state.base.camp.rooms[0].station, "furnace");
     assert.ok(state.ended.route.includes("Inland Ridge"));
-    assert.match(state.ended.contrast, /furnace-heavy/i);
+    assert.match(state.ended.contrast, /furnace/i);
+    assert.match(state.ended.contrast, /ridge/i);
+    assert.doesNotMatch(state.ended.contrast, /expand|furnace line|furnace-heavy/i);
   });
 
   it("completes long-shore with a small home and a far outpost", () => {
@@ -298,6 +306,79 @@ describe("end to end extraction", () => {
     assert.notEqual(scrap.featured, ore.featured);
     assert.ok(scrap.zones.industrial.nodes.components > (ore.zones.industrial.nodes.components || 0));
     assert.ok((ore.zones.ridge.nodes.ore || 0) > (scrap.zones.ridge.nodes.ore || 0));
+  });
+});
+
+describe("skiff honesty", () => {
+  function identifyAtWreck(state) {
+    state.player.location = "wreck";
+    return apply(state, { type: "explore" });
+  }
+
+  function identifiedLine(state) {
+    const line = state.log.filter((entry) => /Identified/i.test(entry)).pop();
+    assert.ok(line, "expected an identify log line");
+    return line;
+  }
+
+  it("identify after owning pontoon never says Missing for held parts", () => {
+    let state = expedition.createGame({ seed: seedFor("ridge-ore") });
+    state.boat.parts.pontoon = true;
+    state = identifyAtWreck(state);
+    const line = identifiedLine(state);
+    const missing = expedition.missingSkiffParts(state.boat);
+    assert.deepEqual(
+      missing.map((part) => part.id),
+      ["coil", "fuel"]
+    );
+    assert.match(line, /Missing:/);
+    assert.doesNotMatch(line, /pontoon/i);
+    assert.match(line, /starter coil/i);
+    assert.match(line, /fuel kit/i);
+    const reinspect = expedition.inspectAction(state, { type: "explore" });
+    const assemble = expedition.inspectAction(state, { type: "assemble" });
+    assert.equal(reinspect.ok, false);
+    assert.equal(assemble.ok, false);
+    assert.equal(reinspect.reason, expedition.skiffStatusCopy(state.boat));
+    assert.equal(assemble.reason, expedition.skiffAssembleReason(state.boat));
+    assert.doesNotMatch(reinspect.reason, /pontoon/i);
+    assert.doesNotMatch(assemble.reason, /pontoon/i);
+    assert.match(reinspect.reason, /starter coil/i);
+    assert.match(assemble.reason, /starter coil/i);
+    assert.match(reinspect.reason, /fuel kit/i);
+    assert.match(assemble.reason, /fuel kit/i);
+    assert.equal(line, expedition.skiffIdentifyCopy({ parts: { pontoon: true, coil: false, fuel: false } }));
+  });
+
+  it("omits fuel from Missing when the kit was crafted before identify", () => {
+    let state = expedition.createGame({ seed: seedFor("ridge-ore") });
+    state.boat.parts.fuel = true;
+    state = identifyAtWreck(state);
+    const line = identifiedLine(state);
+    assert.match(line, /Missing:/);
+    assert.doesNotMatch(line, /fuel/i);
+    assert.match(line, /pontoon plate/i);
+    assert.match(line, /starter coil/i);
+    const status = expedition.getView(state).boat.status;
+    assert.doesNotMatch(status, /fuel/i);
+    assert.match(status, /pontoon plate/i);
+  });
+
+  it("says parts are on you when every skiff part is already held", () => {
+    let state = expedition.createGame({ seed: seedFor("ridge-ore") });
+    state.boat.parts = { pontoon: true, coil: true, fuel: true };
+    state = identifyAtWreck(state);
+    const line = identifiedLine(state);
+    assert.doesNotMatch(line, /Missing/i);
+    assert.match(line, /parts on you/i);
+    assert.match(line, /assemble when ready/i);
+    const reinspect = expedition.inspectAction(state, { type: "explore" });
+    assert.equal(reinspect.reason, expedition.skiffStatusCopy(state.boat));
+    assert.match(reinspect.reason, /parts on you/i);
+    assert.doesNotMatch(reinspect.reason, /Missing/i);
+    const assemble = expedition.inspectAction(state, { type: "assemble" });
+    assert.equal(assemble.ok, true);
+    assert.equal(assemble.reason, "");
   });
 });
 
