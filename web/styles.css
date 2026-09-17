@@ -1097,17 +1097,17 @@ img.stencil.art-glyph-crane { object-position: 78% 40%; }
 }
 .portrait-plate.shape-1x2 .portrait-bible {
   inset: auto;
-  width: calc(1280 / 380 * 100%);
+  width: calc(1280 / 300 * 100%);
   height: auto;
-  left: calc(-455 / 380 * 100%);
-  top: calc(-245 / 380 * 100%);
+  left: calc(-490 / 300 * 100%);
+  top: calc(-235 / 300 * 100%);
 }
 .portrait-plate.shape-2x2 .portrait-bible {
   inset: auto;
-  width: calc(1280 / 430 * 100%);
+  width: calc(1280 / 360 * 100%);
   height: auto;
-  left: calc(-810 / 430 * 100%);
-  top: calc(-220 / 430 * 100%);
+  left: calc(-840 / 360 * 100%);
+  top: calc(-185 / 360 * 100%);
 }
 .portrait-svg {
   position: relative;
