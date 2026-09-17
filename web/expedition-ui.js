@@ -151,54 +151,144 @@
     );
   }
 
+  var MONUMENT_GLYPHS = {
+    "train-yard": { src: "art/toe-crane.png", cls: "ex-glyph-crane", label: "Train Yard" },
+    "military-tunnels": { src: "art/lattice-spike.png", cls: "ex-glyph-tunnels", label: "Military Tunnels" },
+  };
+
+  function monumentGlyph(monumentId, extraClass) {
+    var spec = MONUMENT_GLYPHS[monumentId];
+    if (!spec) return null;
+    var frame = make("span", "ex-glyph " + spec.cls + (extraClass ? " " + extraClass : ""));
+    var img = make("img", "ex-glyph-img");
+    img.src = spec.src;
+    img.alt = spec.label;
+    img.decoding = "async";
+    img.draggable = false;
+    frame.append(img);
+    return frame;
+  }
+
+  function svgNode(name, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", name);
+    Object.keys(attrs || {}).forEach(function (key) {
+      el.setAttribute(key, attrs[key]);
+    });
+    return el;
+  }
+
+  function plugTriangle(svg, x, y, dir, size) {
+    var pts;
+    if (dir === "s") pts = [x, y + size, x - size * 0.92, y, x + size * 0.92, y];
+    else if (dir === "n") pts = [x, y - size, x - size * 0.92, y, x + size * 0.92, y];
+    else if (dir === "w") pts = [x - size, y, x, y - size * 0.92, x, y + size * 0.92];
+    else pts = [x + size, y, x, y - size * 0.92, x, y + size * 0.92];
+    svg.appendChild(
+      svgNode("polygon", {
+        points: pts.join(" "),
+        class: "portrait-plug",
+        fill: "rgba(72, 74, 70, 0.55)",
+        stroke: "rgba(232, 220, 200, 0.72)",
+        "stroke-width": "1.4",
+        "stroke-dasharray": "3 2",
+      })
+    );
+  }
+
+  function roomSquare(svg, x, y, w, h, label, filled) {
+    svg.appendChild(
+      svgNode("rect", {
+        x: String(x),
+        y: String(y),
+        width: String(w),
+        height: String(h),
+        rx: "2",
+        ry: "2",
+        class: filled ? "portrait-core is-filled" : "portrait-core",
+        fill: filled ? "rgba(42, 33, 24, 0.38)" : "rgba(18, 16, 12, 0.12)",
+        stroke: filled ? "#d4b46a" : "rgba(232,196,148,0.42)",
+        "stroke-width": "2",
+      })
+    );
+    var t = svgNode("text", {
+      x: String(x + w / 2),
+      y: String(y + h / 2 + 5),
+      "text-anchor": "middle",
+      fill: "#efe4d2",
+      "font-size": "13",
+      "font-family": "IBM Plex Sans, sans-serif",
+    });
+    t.textContent = label;
+    svg.appendChild(t);
+  }
+
   function renderPortrait(base) {
     var wrap = make("div", "portrait-wrap");
     var rooms = (base.camp && base.camp.rooms) || [];
     var shape = (base.camp && base.camp.shape) || "none";
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 200 200");
-    svg.setAttribute("class", "portrait-svg");
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", "Base portrait " + shape);
+    var plate = make("div", "portrait-plate shape-" + shape);
+    plate.setAttribute("role", "img");
+    plate.setAttribute("aria-label", "Base portrait " + shape);
+    plate.dataset.shape = shape;
 
-    function rect(x, y, w, h, label, filled) {
-      var r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      r.setAttribute("x", x);
-      r.setAttribute("y", y);
-      r.setAttribute("width", w);
-      r.setAttribute("height", h);
-      r.setAttribute("rx", "8");
-      r.setAttribute("fill", filled ? "#2a2118" : "#14100c");
-      r.setAttribute("stroke", filled ? "#d4b46a" : "rgba(232,196,148,0.28)");
-      r.setAttribute("stroke-width", "2");
-      svg.appendChild(r);
-      var t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      t.setAttribute("x", x + w / 2);
-      t.setAttribute("y", y + h / 2 + 5);
-      t.setAttribute("text-anchor", "middle");
-      t.setAttribute("fill", "#efe4d2");
-      t.setAttribute("font-size", "14");
-      t.setAttribute("font-family", "IBM Plex Sans, sans-serif");
-      t.textContent = label;
-      svg.appendChild(t);
+    if (shape !== "none") {
+      var bible = make("img", "portrait-bible");
+      bible.src = "art/base-growth-bible.png";
+      bible.alt = "";
+      bible.decoding = "async";
+      bible.setAttribute("aria-hidden", "true");
+      plate.append(bible);
+    }
+
+    var svg = svgNode("svg", {
+      viewBox: "0 0 200 200",
+      class: "portrait-svg",
+    });
+
+    function room(i) {
+      return rooms[i] && rooms[i].station;
     }
 
     if (shape === "none") {
-      rect(40, 70, 120, 60, "empty beach", false);
+      roomSquare(svg, 40, 70, 120, 60, "empty beach", false);
     } else if (shape === "1x1") {
-      rect(55, 55, 90, 90, stationLabel(rooms[0] && rooms[0].station), !!(rooms[0] && rooms[0].station));
+      roomSquare(svg, 55, 48, 90, 90, stationLabel(room(0)), !!room(0));
+      svg.appendChild(
+        svgNode("rect", {
+          x: "92",
+          y: "128",
+          width: "16",
+          height: "10",
+          class: "portrait-door",
+          fill: "#4a3728",
+          stroke: "rgba(232,196,148,0.4)",
+          "stroke-width": "1",
+        })
+      );
     } else if (shape === "1x2") {
-      rect(16, 55, 80, 90, stationLabel(rooms[0] && rooms[0].station), !!(rooms[0] && rooms[0].station));
-      rect(104, 55, 80, 90, stationLabel(rooms[1] && rooms[1].station), !!(rooms[1] && rooms[1].station));
+      roomSquare(svg, 18, 48, 80, 90, stationLabel(room(0)), !!room(0));
+      roomSquare(svg, 102, 48, 80, 90, stationLabel(room(1)), !!room(1));
+      plugTriangle(svg, 100, 140, "s", 22);
     } else {
-      rect(16, 16, 80, 80, stationLabel(rooms[0] && rooms[0].station), !!(rooms[0] && rooms[0].station));
-      rect(104, 16, 80, 80, stationLabel(rooms[1] && rooms[1].station), !!(rooms[1] && rooms[1].station));
-      rect(16, 104, 80, 80, stationLabel(rooms[2] && rooms[2].station), !!(rooms[2] && rooms[2].station));
-      rect(104, 104, 80, 80, stationLabel(rooms[3] && rooms[3].station), !!(rooms[3] && rooms[3].station));
+      roomSquare(svg, 40, 36, 58, 58, stationLabel(room(0)), !!room(0));
+      roomSquare(svg, 102, 36, 58, 58, stationLabel(room(1)), !!room(1));
+      roomSquare(svg, 40, 98, 58, 58, stationLabel(room(2)), !!room(2));
+      roomSquare(svg, 102, 98, 58, 58, stationLabel(room(3)), !!room(3));
+      plugTriangle(svg, 70, 34, "n", 16);
+      plugTriangle(svg, 130, 34, "n", 16);
+      plugTriangle(svg, 38, 66, "w", 16);
+      plugTriangle(svg, 38, 126, "w", 16);
+      plugTriangle(svg, 162, 66, "e", 16);
+      plugTriangle(svg, 162, 126, "e", 16);
+      plugTriangle(svg, 70, 158, "s", 16);
+      plugTriangle(svg, 100, 158, "s", 18);
+      plugTriangle(svg, 130, 158, "s", 16);
     }
-    wrap.append(svg);
-    var pre = make("pre", "portrait-ascii", game.portraitLines(state).join("\n"));
-    wrap.append(pre);
+    plate.append(svg);
+    wrap.append(plate);
+    if (shape === "none") {
+      wrap.append(make("pre", "portrait-ascii", game.portraitLines(state).join("\n")));
+    }
     var outposts = Object.keys(base.outposts || {});
     if (outposts.length) {
       wrap.append(make("p", "help", "Outposts at " + outposts.map(function (id) {
@@ -217,6 +307,15 @@
     view.map.forEach(function (zone) {
       if (zone.isHere) hereZone = zone;
     });
+
+    var chrome = make("img", "ex-map-chrome");
+    chrome.src = "art/island-twin-lobes.png";
+    chrome.alt = "";
+    chrome.decoding = "async";
+    chrome.setAttribute("aria-hidden", "true");
+    chrome.style.gridColumn = "1 / -1";
+    chrome.style.gridRow = "1 / -1";
+    map.append(chrome);
 
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("class", "ex-paths");
@@ -238,11 +337,14 @@
       if (canMove) cls += " is-walkable";
       if (canRecall && !canMove) cls += " is-recallable";
       if (distant) cls += " is-distant";
+      if (zone.monument) cls += " has-monument";
 
       var cell = make(both || zone.isHere || distant ? "div" : "button", cls);
       if (cell.tagName === "BUTTON") cell.type = "button";
       cell.style.gridColumn = String(zone.col);
       cell.style.gridRow = String(zone.row);
+      cell.dataset.zone = zone.id;
+      if (zone.monument) cell.dataset.monument = zone.monument.id;
 
       var head = make("div", "ex-zone-head");
       head.append(make("p", "eyebrow", zone.terrain));
@@ -254,12 +356,22 @@
       else if (canRecall && !canMove) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
       if (chips.childNodes.length) head.append(chips);
       cell.append(head);
-      cell.append(make("h3", "", zone.name));
+      var titleRow = make("div", "ex-zone-title");
+      titleRow.append(make("h3", "", zone.name));
+      var hasGlyph = false;
+      if (zone.monument) {
+        var glyph = monumentGlyph(zone.monument.id, "ex-glyph-map");
+        if (glyph) {
+          titleRow.append(glyph);
+          hasGlyph = true;
+        }
+      }
+      cell.append(titleRow);
       var bits = [];
-      if (zone.monument) bits.push(zone.monument.name);
+      if (zone.monument && !hasGlyph) bits.push(zone.monument.name);
       var nodes = nodeLabel(zone.nodes);
       if (nodes) bits.push(nodes);
-      cell.append(make("p", "help", bits.join(" · ") || "Quiet ground."));
+      if (bits.length) cell.append(make("p", "help", bits.join(" · ")));
 
       if (both) {
         var actions = make("div", "ex-zone-actions");
@@ -294,13 +406,23 @@
     for (var col = 1; col <= 3; col++) {
       for (var row = 1; row <= 3; row++) {
         if (occupied[col + "," + row]) continue;
-        var sea = make("div", "ex-sea", row === 1 ? "Open weather" : "Black water");
+        var sea = make("div", "ex-sea");
         sea.style.gridColumn = String(col);
         sea.style.gridRow = String(row);
+        sea.setAttribute("aria-hidden", "true");
         map.append(sea);
       }
     }
     map.append(svg);
+    if (
+      view.map.some(function (zone) {
+        return zone.move.ok && zone.adjacent;
+      })
+    ) {
+      map.classList.add("has-walkable");
+    } else {
+      map.classList.remove("has-walkable");
+    }
   }
 
   function renderObjective(view) {
@@ -414,15 +536,17 @@
     var travel = make("div", "action-row");
     travel.append(make("p", "field-label", "Search & leave"));
     var searchLabel = "Search here";
+    var here = view.map.filter(function (zone) {
+      return zone.isHere;
+    })[0];
     if (view.location === "wreck" && !view.boat.seen) searchLabel = "Identify wreck";
-    else {
-      var here = view.map.filter(function (zone) {
-        return zone.isHere;
-      })[0];
-      if (here && here.monument) searchLabel = "Search " + here.monument.name;
-    }
+    else if (here && here.monument) searchLabel = "Search " + here.monument.name;
     addActionButton(travel, "Recall camp", view.actions.recallCamp, { type: "recall", zoneId: "camp" }, "icon-button");
-    addActionButton(travel, searchLabel, view.actions.explore, { type: "explore" }, "icon-button");
+    var searchBtn = addActionButton(travel, searchLabel, view.actions.explore, { type: "explore" }, "icon-button");
+    if (here && here.monument) {
+      var searchGlyph = monumentGlyph(here.monument.id, "ex-glyph-btn");
+      if (searchGlyph) searchBtn.prepend(searchGlyph);
+    }
     addActionButton(travel, "Assemble skiff", view.actions.assemble, { type: "assemble" }, "icon-button");
     addActionButton(
       travel,
@@ -485,6 +609,7 @@
       : view.nextHint;
     $("seedBadge").textContent = "Seed " + view.seed;
     $("layoutHook").textContent = view.hook;
+    $("basePortrait").dataset.shape = view.base.camp.shape || "none";
     $("basePortrait").replaceChildren(renderPortrait(view.base));
     renderMap(view);
     renderObjective(view);
