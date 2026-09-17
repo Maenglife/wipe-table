@@ -569,7 +569,10 @@
     var yieldAmt = nodes[resource];
     if (state.player.hatchet && (resource === "wood" || resource === "stone")) yieldAmt += 1;
     if (resourceTotal(state.player.inventory) + yieldAmt > carryCap(state)) {
-      return { ok: false, reason: "Pack is full (" + carryCap(state) + "). Store or spend first." };
+      return {
+        ok: false,
+        reason: "Pack is full (" + carryCap(state) + "). Spend, end day, or recall.",
+      };
     }
     return { ok: true, reason: "", yield: yieldAmt };
   }
@@ -1035,6 +1038,19 @@
     };
   }
 
+  function hasSkiffProgress(boat) {
+    boat = boat || {};
+    var parts = boat.parts || {};
+    return !!(boat.seen || boat.assembled || parts.pontoon || parts.coil || parts.fuel);
+  }
+
+  function showExpandForShape(shape) {
+    return {
+      "expand-1x2": shape === "1x1",
+      "expand-2x2": shape === "1x2",
+    };
+  }
+
   function getView(state) {
     var loc = state.player.location;
     var zone = state.wipe.zones[loc];
@@ -1109,6 +1125,8 @@
           }),
         install: inspectInstall(state, null, null),
       },
+      showExpand: showExpandForShape(state.base.camp.shape),
+      extractPrimary: hasSkiffProgress(state.boat),
     };
   }
 
@@ -1159,6 +1177,8 @@
     skiffIdentifyCopy: skiffIdentifyCopy,
     skiffStatusCopy: skiffStatusCopy,
     skiffAssembleReason: skiffAssembleReason,
+    hasSkiffProgress: hasSkiffProgress,
+    showExpandForShape: showExpandForShape,
     generateWipe: generateWipe,
     createGame: createGame,
     applyAction: applyAction,

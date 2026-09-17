@@ -310,8 +310,25 @@
     var build = make("div", "action-row");
     build.append(make("p", "field-label", "Build"));
     addActionButton(build, "Drop 1×1", view.actions.build.shack, { type: "build", structure: "shack" });
-    addActionButton(build, "Expand 1×2", view.actions.build["expand-1x2"], { type: "build", structure: "expand-1x2" });
-    addActionButton(build, "Square 2×2", view.actions.build["expand-2x2"], { type: "build", structure: "expand-2x2" });
+    if (view.showExpand["expand-1x2"] || view.showExpand["expand-2x2"]) {
+      var grow = make("details", "grow-base");
+      grow.append(make("summary", "", "Grow base"));
+      var growRow = make("div", "grow-base-actions");
+      if (view.showExpand["expand-1x2"]) {
+        addActionButton(growRow, "Expand 1×2", view.actions.build["expand-1x2"], {
+          type: "build",
+          structure: "expand-1x2",
+        });
+      }
+      if (view.showExpand["expand-2x2"]) {
+        addActionButton(growRow, "Square 2×2", view.actions.build["expand-2x2"], {
+          type: "build",
+          structure: "expand-2x2",
+        });
+      }
+      grow.append(growRow);
+      build.append(grow);
+    }
     addActionButton(build, "Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
     box.append(build);
 
@@ -337,7 +354,13 @@
     addActionButton(travel, "Recall camp", view.actions.recallCamp, { type: "recall", zoneId: "camp" }, "icon-button");
     addActionButton(travel, "Search here", view.actions.explore, { type: "explore" }, "icon-button");
     addActionButton(travel, "Assemble skiff", view.actions.assemble, { type: "assemble" }, "icon-button");
-    addActionButton(travel, "Extract", view.actions.extract, { type: "extract" }, "primary-button");
+    addActionButton(
+      travel,
+      "Extract",
+      view.actions.extract,
+      { type: "extract" },
+      view.extractPrimary ? "primary-button" : "icon-button"
+    );
     addActionButton(travel, "End day", view.actions.endDay, { type: "endDay" }, "icon-button");
     box.append(travel);
 

@@ -382,6 +382,58 @@ describe("skiff honesty", () => {
   });
 });
 
+describe("ui honesty", () => {
+  it("pack-full gather never mentions Store", () => {
+    const state = expedition.createGame({ seed: seedFor("ridge-ore") });
+    const cap = expedition.carryCap(state);
+    state.player.inventory = {
+      wood: cap,
+      stone: 0,
+      cloth: 0,
+      ore: 0,
+      components: 0,
+      metal: 0,
+      scrap: 0,
+    };
+    const check = expedition.inspectAction(state, { type: "gather", resource: "wood" });
+    assert.equal(check.ok, false);
+    assert.match(check.reason, /Pack is full/i);
+    assert.doesNotMatch(check.reason, /store/i);
+    assert.match(check.reason, /spend/i);
+    assert.match(check.reason, /end day/i);
+    assert.match(check.reason, /recall/i);
+  });
+
+  it("hides expand until a 1×1 exists and primaries Extract only after skiff progress", () => {
+    let state = expedition.createGame({ seed: seedFor("ridge-ore") });
+    let view = expedition.getView(state);
+    assert.equal(view.showExpand["expand-1x2"], false);
+    assert.equal(view.showExpand["expand-2x2"], false);
+    assert.equal(view.extractPrimary, false);
+
+    state = apply(state, { type: "build", structure: "shack" });
+    view = expedition.getView(state);
+    assert.equal(view.base.camp.shape, "1x1");
+    assert.equal(view.showExpand["expand-1x2"], true);
+    assert.equal(view.showExpand["expand-2x2"], false);
+    assert.equal(view.extractPrimary, false);
+
+    state.player.inventory.wood = 6;
+    state.player.inventory.stone = 4;
+    state = apply(state, { type: "build", structure: "expand-1x2" });
+    view = expedition.getView(state);
+    assert.equal(view.base.camp.shape, "1x2");
+    assert.equal(view.showExpand["expand-1x2"], false);
+    assert.equal(view.showExpand["expand-2x2"], true);
+
+    state.boat.parts.pontoon = true;
+    assert.equal(expedition.getView(state).extractPrimary, true);
+    state.boat.parts.pontoon = false;
+    state.boat.seen = true;
+    assert.equal(expedition.getView(state).extractPrimary, true);
+  });
+});
+
 describe("resume", () => {
   it("round-trips a mid-wipe state", () => {
     let state = expedition.createGame({ seed: seedFor("harbor-scrap") });
