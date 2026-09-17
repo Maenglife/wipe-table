@@ -61,21 +61,19 @@
         </div>
       </div>
 
-      <p class="layout-hook" id="layoutHook"></p>
-
-      <section class="play-panel objective-panel" aria-labelledby="objectiveHeading">
-        <div class="panel-head">
-          <h2 id="objectiveHeading">Extraction skiff</h2>
-          <p class="help" id="objectiveHelp">Walk to Wreck Beach to identify the skiff. Search Train Yard and Military Tunnels for parts. Prepare fuel, assemble, extract.</p>
-        </div>
-        <div id="objectiveTrack" class="objective-track"></div>
+      <section id="objective" class="skiff-strip" aria-labelledby="objectiveHeading">
+        <h2 id="objectiveHeading" class="sr-only">Extraction skiff</h2>
+        <div id="objectiveTrack" class="skiff-pips" role="list"></div>
+        <p class="skiff-status" id="objectiveHelp">Walk to Wreck Beach to identify the skiff. Search Train Yard and Military Tunnels for parts. Prepare fuel, assemble, extract.</p>
       </section>
+
+      <p class="layout-hook" id="layoutHook"></p>
 
       <div class="expedition-grid">
         <section class="play-panel" aria-labelledby="mapHeading">
           <div class="panel-head">
             <h2 id="mapHeading">Island</h2>
-            <p class="help" id="mapHelp">Gold ring is you. Glowing neighbours with a path are a walk. Distant ground says Not adjacent. If Walk and Recall both show, pick one.</p>
+            <p class="help" id="mapHelp">HERE is you. Walkable ground is an icon with a path. Distant island is chrome — name on hover. If Walk and Recall both show, pick one.</p>
           </div>
           <div id="islandMap" class="ex-map"></div>
         </section>

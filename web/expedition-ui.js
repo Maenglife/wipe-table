@@ -169,6 +169,13 @@
     return frame;
   }
 
+  function zoneStamp(zone) {
+    var wrap = make("span", "ex-stamp ex-stamp-" + zone.id);
+    var html = window.WipeIcons && window.WipeIcons.zoneStamp && window.WipeIcons.zoneStamp(zone.id, zone.name);
+    if (html) wrap.innerHTML = html;
+    return wrap;
+  }
+
   function svgNode(name, attrs) {
     var el = document.createElementNS("http://www.w3.org/2000/svg", name);
     Object.keys(attrs || {}).forEach(function (key) {
@@ -330,34 +337,38 @@
       var canRecall = zone.recall.ok;
       var both = canMove && canRecall;
       var distant = !zone.isHere && !canMove && !canRecall;
+      var chromeOnly = distant && !zone.claimed;
+      var iconTile = zone.isHere || canMove;
       var fastTravel = canMove && !zone.adjacent;
+      var clickable = (canMove || canRecall) && !both && !zone.isHere;
       var cls = "ex-zone";
       if (zone.isHere) cls += " is-here";
       if (zone.claimed) cls += " is-claimed";
       if (canMove) cls += " is-walkable";
       if (canRecall && !canMove) cls += " is-recallable";
-      if (distant) cls += " is-distant";
+      if (chromeOnly) cls += " is-distant is-chrome";
+      else if (distant) cls += " is-distant is-solid";
+      if (iconTile) cls += " is-icon";
       if (zone.monument) cls += " has-monument";
 
-      var cell = make(both || zone.isHere || distant ? "div" : "button", cls);
+      var cell = make(clickable ? "button" : "div", cls);
       if (cell.tagName === "BUTTON") cell.type = "button";
       cell.style.gridColumn = String(zone.col);
       cell.style.gridRow = String(zone.row);
       cell.dataset.zone = zone.id;
       if (zone.monument) cell.dataset.monument = zone.monument.id;
+      cell.setAttribute("aria-label", zone.isHere ? zone.name + ", you are here" : zone.name);
 
-      var head = make("div", "ex-zone-head");
-      head.append(make("p", "eyebrow", zone.terrain));
-      var chips = make("div", "ex-chips");
-      if (zone.isHere) chips.append(make("span", "ex-chip ex-chip-here", "Here"));
-      else if (zone.claimed) chips.append(make("span", "ex-chip ex-chip-claimed", "Claimed"));
-      if (distant) chips.append(make("span", "ex-chip ex-chip-distant", "Not adjacent"));
-      else if (canMove && !both) chips.append(make("span", "ex-chip ex-chip-walk", fastTravel ? "Fast travel" : "Walk"));
-      else if (canRecall && !canMove) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
-      if (chips.childNodes.length) head.append(chips);
-      cell.append(head);
+      if (zone.isHere) {
+        var hereMark = make("span", "ex-here-banner", "HERE");
+        hereMark.setAttribute("aria-hidden", "true");
+        cell.append(hereMark);
+      }
+
+      if (iconTile) cell.append(zoneStamp(zone));
+
       var titleRow = make("div", "ex-zone-title");
-      titleRow.append(make("h3", "", zone.name));
+      titleRow.append(make("p", "ex-zone-caption", zone.name));
       var hasGlyph = false;
       if (zone.monument) {
         var glyph = monumentGlyph(zone.monument.id, "ex-glyph-map");
@@ -369,23 +380,31 @@
       cell.append(titleRow);
       var bits = [];
       if (zone.monument && !hasGlyph) bits.push(zone.monument.name);
-      var nodes = nodeLabel(zone.nodes);
-      if (nodes) bits.push(nodes);
+      if (!chromeOnly && !iconTile) {
+        var nodes = nodeLabel(zone.nodes);
+        if (nodes) bits.push(nodes);
+      }
       if (bits.length) cell.append(make("p", "help", bits.join(" · ")));
+
+      var chips = make("div", "ex-chips");
+      if (zone.claimed && !zone.isHere) chips.append(make("span", "ex-chip ex-chip-claimed", "Claimed"));
+      if (canRecall && !canMove) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
+      if (chips.childNodes.length) cell.append(chips);
+
+      if (chromeOnly) {
+        cell.tabIndex = 0;
+        cell.title = zone.name;
+      }
 
       if (both) {
         var actions = make("div", "ex-zone-actions");
         addActionButton(actions, "Walk", zone.move, { type: "move", zoneId: zone.id }, "small-button");
         addActionButton(actions, "Recall", zone.recall, { type: "recall", zoneId: zone.id }, "small-button");
         cell.append(actions);
-      } else if (cell.tagName === "BUTTON") {
-        cell.disabled = !canMove && !canRecall;
-        if (zone.isHere) cell.title = "You are here";
-        else if (canMove) cell.title = (fastTravel ? "Fast travel to " : "Walk to ") + zone.name;
-        else if (canRecall) cell.title = "Recall to " + zone.name;
-        else cell.title = "Not adjacent";
+      } else if (clickable) {
+        if (canMove) cell.title = (fastTravel ? "Fast travel to " : "Walk to ") + zone.name;
+        else cell.title = "Recall to " + zone.name;
         cell.addEventListener("click", function () {
-          if (zone.isHere || distant) return;
           if (canMove) act({ type: "move", zoneId: zone.id });
           else if (canRecall) act({ type: "recall", zoneId: zone.id });
         });
@@ -431,16 +450,19 @@
       : "Walk to Wreck Beach and search the ribs to identify the boat.";
     var track = $("objectiveTrack");
     track.replaceChildren();
-    function part(name, have, hint) {
-      var item = make("div", "objective-part" + (have ? " is-have" : ""));
-      item.append(make("strong", "", have ? "✓ " + name : name));
-      item.append(make("p", "help", hint));
+    function pip(name, have, hint) {
+      var item = make("span", "skiff-pip" + (have ? " is-have" : ""));
+      item.setAttribute("role", "listitem");
+      item.setAttribute("aria-label", name + (have ? ", have" : ", missing"));
+      item.title = have ? name + " — have" : name + " — " + hint;
+      item.append(make("span", "skiff-pip-dot", have ? "✓" : ""));
+      item.append(make("span", "skiff-pip-name", name));
       track.append(item);
     }
-    part("Pontoon plate", view.boat.parts.pontoon, "Search Train Yard");
-    part("Starter coil", view.boat.parts.coil, "Search Military Tunnels");
-    part("Fuel kit", view.boat.parts.fuel, "Craft at a claimed site");
-    part("Assembled", view.boat.assembled, "Bolt it together on Wreck Beach");
+    pip("Pontoon plate", view.boat.parts.pontoon, "Search Train Yard");
+    pip("Starter coil", view.boat.parts.coil, "Search Military Tunnels");
+    pip("Fuel kit", view.boat.parts.fuel, "Craft at a claimed site");
+    pip("Assembled", view.boat.assembled, "Bolt it together on Wreck Beach");
   }
 
   function renderInventory(view) {
@@ -471,53 +493,55 @@
     var box = $("actionBox");
     box.replaceChildren();
 
-    var gather = make("div", "action-row");
-    gather.append(make("p", "field-label", "Gather"));
-    var keys = (view.actions.gather.resources || []).slice();
-    if (!keys.length) gather.append(make("p", "help", view.actions.gather.reason || "Nothing to pull here."));
-    keys.forEach(function (resource) {
-      var check = game.inspectAction(state, { type: "gather", resource: resource });
-      addActionButton(gather, "Take " + resource, check, { type: "gather", resource: resource });
-    });
-    box.append(gather);
+    var legal = [];
+    var blocked = [];
+    var here = view.map.filter(function (zone) {
+      return zone.isHere;
+    })[0];
 
-    var build = make("div", "action-row");
-    build.append(make("p", "field-label", "Build"));
+    function queue(label, check, action, className, decorate) {
+      var item = {
+        label: label,
+        check: check || { ok: false, reason: "Unavailable." },
+        action: action,
+        className: className,
+        decorate: decorate,
+      };
+      if (item.check.ok) legal.push(item);
+      else blocked.push(item);
+    }
+
+    var keys = (view.actions.gather.resources || []).slice();
+    if (!keys.length) {
+      queue("Gather", view.actions.gather, { type: "gather" });
+    } else {
+      keys.forEach(function (resource) {
+        queue(
+          "Take " + resource,
+          game.inspectAction(state, { type: "gather", resource: resource }),
+          { type: "gather", resource: resource }
+        );
+      });
+    }
+
     if (view.base.camp.shape === "none") {
-      addActionButton(
-        build,
+      queue(
         "Drop 1×1",
         view.actions.build.shack,
         { type: "build", structure: "shack" },
         view.actions.build.shack.ok ? "primary-button" : "small-button"
       );
     }
-    if (view.showExpand["expand-1x2"] || view.showExpand["expand-2x2"]) {
-      var grow = make("details", "grow-base");
-      grow.append(make("summary", "", "Grow base"));
-      var growRow = make("div", "grow-base-actions");
-      if (view.showExpand["expand-1x2"]) {
-        addActionButton(growRow, "Expand 1×2", view.actions.build["expand-1x2"], {
-          type: "build",
-          structure: "expand-1x2",
-        });
-      }
-      if (view.showExpand["expand-2x2"]) {
-        addActionButton(growRow, "Square 2×2", view.actions.build["expand-2x2"], {
-          type: "build",
-          structure: "expand-2x2",
-        });
-      }
-      grow.append(growRow);
-      build.append(grow);
+    if (view.showExpand["expand-1x2"]) {
+      queue("Expand 1×2", view.actions.build["expand-1x2"], { type: "build", structure: "expand-1x2" });
     }
-    if (view.base.camp.shape !== "none") {
-      addActionButton(build, "Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
+    if (view.showExpand["expand-2x2"]) {
+      queue("Square 2×2", view.actions.build["expand-2x2"], { type: "build", structure: "expand-2x2" });
     }
-    box.append(build);
+    if (view.base.camp.shape !== "none" && view.location !== "camp") {
+      queue("Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
+    }
 
-    var craft = make("div", "action-row");
-    craft.append(make("p", "field-label", "Craft"));
     view.actions.craft.forEach(function (entry) {
       if (entry.id === "smelt" && view.known.indexOf("furnace") === -1) return;
       if (entry.id === "recycle" && view.known.indexOf("recycler") === -1) return;
@@ -526,37 +550,58 @@
       if (entry.id === "smelt") label = "Smelt ore";
       if (entry.id === "recycle") label = "Recycle components";
       if (entry.id === "fuel-kit") label = "Prepare fuel kit";
-      addActionButton(craft, label, entry.craft, { type: "craft", recipeId: entry.id });
+      queue(label, entry.craft, { type: "craft", recipeId: entry.id });
     });
-    if (view.actions.install.ok) {
-      addActionButton(craft, "Install " + view.actions.install.kit, view.actions.install, { type: "install" }, "small-button");
+    if (view.kits.length) {
+      var installLabel = view.actions.install.kit ? "Install " + view.actions.install.kit : "Install kit";
+      queue(installLabel, view.actions.install, { type: "install" });
     }
-    box.append(craft);
 
-    var travel = make("div", "action-row");
-    travel.append(make("p", "field-label", "Search & leave"));
     var searchLabel = "Search here";
-    var here = view.map.filter(function (zone) {
-      return zone.isHere;
-    })[0];
     if (view.location === "wreck" && !view.boat.seen) searchLabel = "Identify wreck";
     else if (here && here.monument) searchLabel = "Search " + here.monument.name;
-    addActionButton(travel, "Recall camp", view.actions.recallCamp, { type: "recall", zoneId: "camp" }, "icon-button");
-    var searchBtn = addActionButton(travel, searchLabel, view.actions.explore, { type: "explore" }, "icon-button");
-    if (here && here.monument) {
-      var searchGlyph = monumentGlyph(here.monument.id, "ex-glyph-btn");
-      if (searchGlyph) searchBtn.prepend(searchGlyph);
-    }
-    addActionButton(travel, "Assemble skiff", view.actions.assemble, { type: "assemble" }, "icon-button");
-    addActionButton(
-      travel,
+    queue("Recall camp", view.actions.recallCamp, { type: "recall", zoneId: "camp" }, "icon-button");
+    queue(searchLabel, view.actions.explore, { type: "explore" }, "icon-button", function (btn) {
+      if (here && here.monument) {
+        var searchGlyph = monumentGlyph(here.monument.id, "ex-glyph-btn");
+        if (searchGlyph) btn.prepend(searchGlyph);
+      }
+    });
+    queue("Assemble skiff", view.actions.assemble, { type: "assemble" }, "icon-button");
+    queue(
       "Extract",
       view.actions.extract,
       { type: "extract" },
-      view.extractPrimary ? "primary-button" : "icon-button"
+      view.extractPrimary && view.actions.extract.ok ? "primary-button" : "icon-button"
     );
-    addActionButton(travel, "End day", view.actions.endDay, { type: "endDay" }, "icon-button");
-    box.append(travel);
+    queue("End day", view.actions.endDay, { type: "endDay" }, "icon-button");
+
+    var now = make("div", "action-row action-now");
+    now.append(make("p", "field-label", "Available now"));
+    if (!legal.length) {
+      now.append(make("p", "help", view.ended ? view.ended.ending : "Nothing legal this beat."));
+    } else {
+      legal.forEach(function (item) {
+        var btn = addActionButton(now, item.label, item.check, item.action, item.className);
+        if (item.decorate) item.decorate(btn);
+      });
+    }
+    box.append(now);
+
+    if (blocked.length) {
+      var why = make("details", "why-not");
+      why.append(make("summary", "", "Why not"));
+      var list = make("ul", "why-not-list");
+      blocked.forEach(function (item) {
+        var row = make("li", "why-not-row");
+        row.append(make("strong", "", item.label));
+        row.append(document.createTextNode(" — "));
+        row.append(make("span", "why-not-reason", item.check.reason || "Unavailable."));
+        list.append(row);
+      });
+      why.append(list);
+      box.append(why);
+    }
 
     $("actionHint").textContent =
       view.nextHint +
