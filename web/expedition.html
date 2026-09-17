@@ -24,7 +24,7 @@
     </a>
     <nav aria-label="Main">
       <span class="nav-current">Expedition</span>
-      <a class="nav-button" href="./">Builder</a>
+      <a class="nav-button" href="./">Legacy builder</a>
       <a class="nav-button" href="play.html">Hotseat</a>
       <button type="button" class="nav-button" id="howBtn">How to play</button>
     </nav>
@@ -34,7 +34,7 @@
     <section id="lobby" class="play-lobby expedition-lobby" hidden>
       <p class="eyebrow">SOLO · NO PVP</p>
       <h1>The wipe is the game.</h1>
-      <p class="help">One quiet island, a 1×1, and a broken skiff. Geography and finds change how you build. About twenty minutes. Unofficial fan project — not affiliated with Facepunch.</p>
+      <p class="help">Drop a 1×1, gather, search Train Yard and Military Tunnels, identify the wreck, assemble the skiff, extract. About twenty minutes. No PvP. Unofficial fan project — not affiliated with Facepunch.</p>
       <form id="startForm" class="start-form">
         <label class="field-label" for="seedInput">Wipe seed</label>
         <input id="seedInput" type="text" maxlength="48" placeholder="Leave blank for a fresh island" autocomplete="off">
@@ -50,7 +50,7 @@
         <div>
           <p class="eyebrow" id="statusKicker">DAY 1</p>
           <h1 id="turnHeading">Shore Camp</h1>
-          <p class="wipe-subtitle" id="statusLine">Drop a 1×1, then follow the island.</p>
+          <p class="wipe-subtitle" id="statusLine">Drop a 1×1, then gather.</p>
         </div>
         <div class="wipe-actions">
           <span class="mode-badge" id="seedBadge"></span>
@@ -63,7 +63,7 @@
       <section class="play-panel objective-panel" aria-labelledby="objectiveHeading">
         <div class="panel-head">
           <h2 id="objectiveHeading">Extraction skiff</h2>
-          <p class="help" id="objectiveHelp">Find the wreck, retrieve parts, prepare fuel, leave when you choose.</p>
+          <p class="help" id="objectiveHelp">Walk to Wreck Beach to identify the skiff. Search Train Yard and Military Tunnels for parts. Prepare fuel, assemble, extract.</p>
         </div>
         <div id="objectiveTrack" class="objective-track"></div>
       </section>
@@ -72,7 +72,7 @@
         <section class="play-panel" aria-labelledby="mapHeading">
           <div class="panel-head">
             <h2 id="mapHeading">Island</h2>
-            <p class="help" id="mapHelp">Click a neighbouring zone to walk. Recalling uses a claimed bed.</p>
+            <p class="help" id="mapHelp">Click a neighbouring zone to walk. Search monuments and the wreck when you arrive.</p>
           </div>
           <div id="islandMap" class="ex-map"></div>
         </section>
@@ -91,7 +91,7 @@
       <section class="play-panel expedition-actions" aria-labelledby="actionsHeading">
         <div class="panel-head">
           <h2 id="actionsHeading">Actions</h2>
-          <p class="help" id="actionHint">Four actions make a day.</p>
+          <p class="help" id="actionHint">Drop a 1×1, then gather. Four actions make a day.</p>
         </div>
         <div id="actionBox" class="action-box"></div>
         <p class="action-reason" id="turnReasons"></p>
@@ -119,7 +119,7 @@
     <div id="endMeta" class="end-meta"></div>
     <div class="winner-actions">
       <button type="button" class="primary-button" id="endAgain">Another wipe</button>
-      <a class="icon-button winner-link" href="./">Back to builder</a>
+      <a class="icon-button winner-link" href="./">Home</a>
     </div>
   </dialog>
 

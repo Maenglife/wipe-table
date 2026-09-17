@@ -309,7 +309,15 @@
 
     var build = make("div", "action-row");
     build.append(make("p", "field-label", "Build"));
-    addActionButton(build, "Drop 1×1", view.actions.build.shack, { type: "build", structure: "shack" });
+    if (view.base.camp.shape === "none") {
+      addActionButton(
+        build,
+        "Drop 1×1",
+        view.actions.build.shack,
+        { type: "build", structure: "shack" },
+        view.actions.build.shack.ok ? "primary-button" : "small-button"
+      );
+    }
     if (view.showExpand["expand-1x2"] || view.showExpand["expand-2x2"]) {
       var grow = make("details", "grow-base");
       grow.append(make("summary", "", "Grow base"));
@@ -329,7 +337,9 @@
       grow.append(growRow);
       build.append(grow);
     }
-    addActionButton(build, "Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
+    if (view.base.camp.shape !== "none") {
+      addActionButton(build, "Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
+    }
     box.append(build);
 
     var craft = make("div", "action-row");
@@ -351,8 +361,16 @@
 
     var travel = make("div", "action-row");
     travel.append(make("p", "field-label", "Search & leave"));
+    var searchLabel = "Search here";
+    if (view.location === "wreck" && !view.boat.seen) searchLabel = "Identify wreck";
+    else {
+      var here = view.map.filter(function (zone) {
+        return zone.isHere;
+      })[0];
+      if (here && here.monument) searchLabel = "Search " + here.monument.name;
+    }
     addActionButton(travel, "Recall camp", view.actions.recallCamp, { type: "recall", zoneId: "camp" }, "icon-button");
-    addActionButton(travel, "Search here", view.actions.explore, { type: "explore" }, "icon-button");
+    addActionButton(travel, searchLabel, view.actions.explore, { type: "explore" }, "icon-button");
     addActionButton(travel, "Assemble skiff", view.actions.assemble, { type: "assemble" }, "icon-button");
     addActionButton(
       travel,
@@ -364,18 +382,12 @@
     addActionButton(travel, "End day", view.actions.endDay, { type: "endDay" }, "icon-button");
     box.append(travel);
 
-    var found = view.revealed.map(function (row) {
-      return row.name;
-    });
     $("actionHint").textContent =
+      view.nextHint +
+      " · " +
       view.actionsLeft +
-      " actions left today. Discoveries: " +
-      (found.length ? found.join(", ") : "none yet") +
-      ".";
-    var reasons = [];
-    if (!view.actions.explore.ok) reasons.push(view.actions.explore.reason);
-    if (!view.actions.extract.ok) reasons.push(view.actions.extract.reason);
-    $("turnReasons").textContent = view.ended ? view.ended.ending : reasons.filter(Boolean).slice(0, 2).join(" · ");
+      " actions left today.";
+    $("turnReasons").textContent = view.ended ? view.ended.ending : view.nextHint;
   }
 
   function renderLog(view) {
@@ -418,7 +430,7 @@
     $("turnHeading").textContent = view.ended ? "Wipe over" : view.locationName;
     $("statusLine").textContent = view.ended
       ? view.ended.ending
-      : view.layoutName + " · " + view.carried + "/" + view.cap + " in the pack";
+      : view.nextHint;
     $("seedBadge").textContent = "Seed " + view.seed;
     $("layoutHook").textContent = view.hook;
     $("basePortrait").replaceChildren(renderPortrait(view.base));

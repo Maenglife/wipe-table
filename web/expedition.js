@@ -1051,6 +1051,45 @@
     };
   }
 
+  function nextHint(state) {
+    if (state.ended) return (state.ended && state.ended.ending) || "Wipe over.";
+    var loc = state.player.location;
+    var shape = state.base.camp.shape;
+    var boat = state.boat;
+    var zone = state.wipe.zones[loc];
+    if (shape === "none") {
+      return loc === "camp" ? "Drop a 1×1, then gather." : "Return to Shore Camp and drop a 1×1.";
+    }
+    var install = inspectInstall(state, null, null);
+    if (install.ok) {
+      var bp = BLUEPRINTS[install.kit];
+      return "Install " + (bp ? bp.name : install.kit) + " in an empty room.";
+    }
+    if (boat.assembled) {
+      return loc === "wreck" ? "Extract when you are ready to leave." : "Walk to Wreck Beach and Extract.";
+    }
+    var missing = missingSkiffParts(boat);
+    if (boat.seen && !missing.length) {
+      return loc === "wreck" ? "Assemble the skiff, then Extract." : "Walk to Wreck Beach and Assemble the skiff.";
+    }
+    if (loc === "wreck" && !boat.seen) return "Search here to identify the skiff.";
+    if (zone.monument && inspectExplore(state).ok) {
+      var mon = MONUMENTS[zone.monument];
+      if (!boat.parts[mon.part]) return "Search " + mon.name + " for the " + mon.partName.toLowerCase() + ".";
+      return "Search " + mon.name + " for a blueprint.";
+    }
+    if (!boat.parts.fuel && inspectCraft(state, "fuel-kit").ok) return "Prepare a fuel kit.";
+    if (!boat.parts.pontoon) {
+      return "Walk to " + ZONE_META[state.wipe.monuments["train-yard"]].name + " and Search Train Yard.";
+    }
+    if (!boat.parts.coil) {
+      return "Walk to " + ZONE_META[state.wipe.monuments["military-tunnels"]].name + " and Search Military Tunnels.";
+    }
+    if (!boat.parts.fuel) return "Return to camp and Prepare a fuel kit.";
+    if (!boat.seen) return "Walk to Wreck Beach and Search to identify the skiff.";
+    return "Gather, then follow the skiff parts on the island.";
+  }
+
   function getView(state) {
     var loc = state.player.location;
     var zone = state.wipe.zones[loc];
@@ -1127,6 +1166,7 @@
       },
       showExpand: showExpandForShape(state.base.camp.shape),
       extractPrimary: hasSkiffProgress(state.boat),
+      nextHint: nextHint(state),
     };
   }
 
@@ -1179,6 +1219,7 @@
     skiffAssembleReason: skiffAssembleReason,
     hasSkiffProgress: hasSkiffProgress,
     showExpandForShape: showExpandForShape,
+    nextHint: nextHint,
     generateWipe: generateWipe,
     createGame: createGame,
     applyAction: applyAction,

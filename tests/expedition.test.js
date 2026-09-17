@@ -432,6 +432,17 @@ describe("ui honesty", () => {
     state.boat.seen = true;
     assert.equal(expedition.getView(state).extractPrimary, true);
   });
+
+  it("nextHint tells a cold start to drop a 1×1 and never says Store", () => {
+    const state = expedition.createGame({ seed: seedFor("ridge-ore") });
+    const view = expedition.getView(state);
+    assert.match(view.nextHint, /1×1/);
+    assert.match(view.nextHint, /gather/i);
+    assert.doesNotMatch(view.nextHint, /store/i);
+    const after = expedition.getView(apply(state, { type: "build", structure: "shack" }));
+    assert.match(after.nextHint, /Train Yard|Wreck Beach|Search/i);
+    assert.doesNotMatch(after.nextHint, /store/i);
+  });
 });
 
 describe("resume", () => {

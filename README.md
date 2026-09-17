@@ -1,36 +1,10 @@
 # Wipe Table
 
-Unofficial fan project: a compact **solo** survival-island **building-and-expedition** game. Each sitting is one wipe. The island changes how you build; you choose when to leave.
-
-This is **not** affiliated with Facepunch.
-
-## Play the expedition
-
-No package install is required.
-
 ```bash
 python3 -m http.server 43123 --directory web
 ```
 
-Windows:
-
-```bash
-python -m http.server 43123 --directory web
-```
-
-Then open `http://127.0.0.1:43123/expedition.html`.
-
-**Start this wipe** rolls a seed. Same seed rebuilds the same island, monument seats, and blueprint bag. Mid-wipe state is saved in this browser.
-
-Demo seeds (also on the lobby):
-
-| Seed | Layout | What it asks you to build |
-| --- | --- | --- |
-| `wipe-1` | Harbor scrap | Compact recycling workshop — components sit on the Industrial Shelf beside Train Yard |
-| `wipe-4` | Inland ore | Furnace at camp — haul rich ore from the ridge and far spine |
-| `wipe-0` | Long route | Small main base + expedition outpost — both monuments on a long walk |
-
-Play two of those and you should be able to point at a concrete difference: last time you recycled at a compact 1×1; this time you hauled ridge ore to a furnace at camp.
+Open http://127.0.0.1:43123/ and **Play the expedition**. Unofficial fan project — not Facepunch.
 
 ## What a wipe is
 
@@ -50,7 +24,7 @@ Design note: [`docs/EXPEDITION.md`](docs/EXPEDITION.md).
 
 The original product was a Dominion-style **10-card tabletop companion** plus a thin 2-player hotseat. Those still ship:
 
-- Randomizer: `http://127.0.0.1:43123/` (`web/index.html`)
+- Randomizer: home page, folded **Legacy tabletop companion** (`web/index.html`)
 - Hotseat: `web/play.html` after **Hotseat this wipe**
 - Tabletop sheet: [`docs/rules.md`](docs/rules.md)
 - Hotseat house rules: [`docs/PLAYABLE.md`](docs/PLAYABLE.md)

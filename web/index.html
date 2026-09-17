@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#wipeHeading">Skip to tonight's wipe</a>
+  <a class="skip-link" href="#playNow">Skip to play the expedition</a>
 
   <header class="app-header">
     <a class="brand" href="./" aria-label="Wipe Table home">
@@ -23,8 +23,8 @@
       <span>Wipe <em>Table</em></span>
     </a>
     <nav aria-label="Main">
-      <span class="nav-current">Builder</span>
-      <a class="nav-button nav-emphasis" href="expedition.html">Expedition</a>
+      <a class="nav-button nav-emphasis" href="expedition.html">Play expedition</a>
+      <span class="nav-current">Legacy</span>
       <a class="nav-button" href="play.html" id="navPlay">Hotseat</a>
       <button type="button" class="nav-button" id="collectionBtn">Sets <span class="nav-count">3</span></button>
       <button type="button" class="nav-button" id="rulesBtn">Rules</button>
@@ -33,19 +33,22 @@
   </header>
 
   <main class="workspace">
-    <section class="pivot-banner">
+    <section class="pivot-banner" id="playNow">
       <div class="pivot-copy">
         <p class="eyebrow">THE WIPE IS THE GAME</p>
         <h2>Solo building and expedition.</h2>
-        <p class="help">Drop a 1×1, follow this island’s resources and finds, repair a quiet extraction skiff, and leave when you choose. No PvP. The 10-card table below is the legacy tabletop companion.</p>
+        <p class="help">Drop a 1×1, gather, search monuments, identify the wreck, assemble the skiff, extract. No PvP. The 10-card table is a folded legacy companion below.</p>
       </div>
       <div class="pivot-actions">
-        <a class="primary-button" href="expedition.html">Start a new wipe</a>
+        <a class="primary-button" href="expedition.html">Play the expedition</a>
         <a class="icon-button" href="expedition.html?seed=wipe-1">Harbor scrap</a>
         <a class="icon-button" href="expedition.html?seed=wipe-4">Inland ore</a>
       </div>
     </section>
 
+    <details class="legacy-table">
+      <summary>Legacy tabletop companion — 10 cards, not the solo game</summary>
+      <div class="legacy-grid">
     <aside class="setup-column" aria-label="Wipe settings">
       <details class="setup-panel" id="setupPanel" open>
         <summary>
@@ -138,9 +141,9 @@
       <div class="generate-wrap">
         <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
         <button type="button" class="primary-button" id="rerollBtn" disabled>
-          <span aria-hidden="true">↻</span> New wipe
+          <span aria-hidden="true">↻</span> Deal 10 cards
         </button>
-        <span class="generate-note">A fresh seed, unless you typed one above.</span>
+        <span class="generate-note">Legacy tabletop mix. The solo game is Play the expedition above.</span>
       </div>
       <p class="scope-note">Ten cards. Three sets. No account, no backend — the island is this browser.</p>
     </aside>
@@ -195,6 +198,8 @@
         <p>Staking the bag…</p>
       </div>
     </section>
+      </div>
+    </details>
   </main>
 
   <footer class="app-footer">
