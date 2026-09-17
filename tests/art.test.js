@@ -39,8 +39,19 @@ describe("art glyphs", () => {
     assert.match(cssSrc, /\.ex-map-chrome/);
     assert.match(cssSrc, /\.ex-zone/);
     assert.match(cssSrc, /\.ex-sea/);
+    assert.match(cssSrc, /object-fit:\s*contain/);
+    assert.match(cssSrc, /\.ex-map\.has-walkable/);
+    assert.doesNotMatch(uiSrc, /Open weather|Black water/);
+    assert.doesNotMatch(cssSrc, /lobe-west|margin-left:\s*-98%/);
     assert.match(iconSrc, /art\/toe-crane\.png/);
     assert.match(iconSrc, /art\/lattice-spike\.png/);
+  });
+
+  it("stamps glyphs on monument ids and skips duplicate names", () => {
+    assert.match(uiSrc, /hasGlyph/);
+    assert.match(uiSrc, /if \(zone\.monument && !hasGlyph\)/);
+    assert.match(cssSrc, /left: calc\(-175 \/ 300 \* 100%\)/);
+    assert.match(cssSrc, /left: calc\(-710 \/ 300 \* 100%\)/);
   });
 
   it("keeps the lobby hero out of the table HUD", () => {
@@ -61,6 +72,8 @@ describe("art glyphs", () => {
     assert.match(uiSrc, /portrait-door/);
     assert.match(cssSrc, /\.portrait-plate\.shape-1x1/);
     assert.match(cssSrc, /\.portrait-plate\.shape-2x2/);
+    assert.match(uiSrc, /if \(shape === "none"\) \{/);
+    assert.match(uiSrc, /portrait-ascii/);
   });
 });
 

@@ -286,8 +286,9 @@
     }
     plate.append(svg);
     wrap.append(plate);
-    var pre = make("pre", "portrait-ascii", game.portraitLines(state).join("\n"));
-    wrap.append(pre);
+    if (shape === "none") {
+      wrap.append(make("pre", "portrait-ascii", game.portraitLines(state).join("\n")));
+    }
     var outposts = Object.keys(base.outposts || {});
     if (outposts.length) {
       wrap.append(make("p", "help", "Outposts at " + outposts.map(function (id) {
@@ -330,8 +331,7 @@
       var both = canMove && canRecall;
       var distant = !zone.isHere && !canMove && !canRecall;
       var fastTravel = canMove && !zone.adjacent;
-      var lobe = zone.col === 1 ? "west" : zone.col === 3 ? "east" : "isthmus";
-      var cls = "ex-zone lobe-" + lobe;
+      var cls = "ex-zone";
       if (zone.isHere) cls += " is-here";
       if (zone.claimed) cls += " is-claimed";
       if (canMove) cls += " is-walkable";
@@ -344,7 +344,6 @@
       cell.style.gridColumn = String(zone.col);
       cell.style.gridRow = String(zone.row);
       cell.dataset.zone = zone.id;
-      cell.dataset.lobe = lobe;
       if (zone.monument) cell.dataset.monument = zone.monument.id;
 
       var head = make("div", "ex-zone-head");
@@ -359,16 +358,20 @@
       cell.append(head);
       var titleRow = make("div", "ex-zone-title");
       titleRow.append(make("h3", "", zone.name));
+      var hasGlyph = false;
       if (zone.monument) {
         var glyph = monumentGlyph(zone.monument.id, "ex-glyph-map");
-        if (glyph) titleRow.append(glyph);
+        if (glyph) {
+          titleRow.append(glyph);
+          hasGlyph = true;
+        }
       }
       cell.append(titleRow);
       var bits = [];
-      if (zone.monument) bits.push(zone.monument.name);
+      if (zone.monument && !hasGlyph) bits.push(zone.monument.name);
       var nodes = nodeLabel(zone.nodes);
       if (nodes) bits.push(nodes);
-      cell.append(make("p", "help", bits.join(" · ") || "Quiet ground."));
+      if (bits.length) cell.append(make("p", "help", bits.join(" · ")));
 
       if (both) {
         var actions = make("div", "ex-zone-actions");
@@ -403,14 +406,23 @@
     for (var col = 1; col <= 3; col++) {
       for (var row = 1; row <= 3; row++) {
         if (occupied[col + "," + row]) continue;
-        var sea = make("div", "ex-sea", row === 1 ? "Open weather" : "Black water");
+        var sea = make("div", "ex-sea");
         sea.style.gridColumn = String(col);
         sea.style.gridRow = String(row);
-        sea.dataset.sea = row === 1 ? "weather" : "black";
+        sea.setAttribute("aria-hidden", "true");
         map.append(sea);
       }
     }
     map.append(svg);
+    if (
+      view.map.some(function (zone) {
+        return zone.move.ok && zone.adjacent;
+      })
+    ) {
+      map.classList.add("has-walkable");
+    } else {
+      map.classList.remove("has-walkable");
+    }
   }
 
   function renderObjective(view) {

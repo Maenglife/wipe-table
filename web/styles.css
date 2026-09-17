@@ -899,24 +899,29 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
 .ex-map {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(3, minmax(76px, auto));
-  gap: 8px;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 6px;
   margin-top: 12px;
   position: relative;
   isolation: isolate;
   overflow: hidden;
   border-radius: 18px;
-  background: #3a4450;
-  min-height: 280px;
+  background: #4a555c;
+  min-height: 300px;
+  aspect-ratio: 16 / 9;
 }
 .ex-map-chrome {
   z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 46%;
+  object-fit: contain;
+  object-position: center;
   pointer-events: none;
-  opacity: 0.92;
+  opacity: 1;
+}
+.ex-map.has-walkable .ex-map-chrome {
+  opacity: 0.72;
+  filter: brightness(0.88);
 }
 .ex-paths {
   z-index: 2;
@@ -932,9 +937,8 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   opacity: 0.9;
 }
 .ex-zone, .ex-sea {
-  border: 1px solid var(--line);
+  border: 1px solid transparent;
   border-radius: 12px;
-  background: #14100c;
   color: inherit;
   text-align: left;
   padding: 8px;
@@ -944,12 +948,11 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   position: relative;
   z-index: 1;
   cursor: pointer;
-  min-height: 76px;
-  background: rgba(20, 16, 12, 0.78);
+  min-height: 0;
+  background: linear-gradient(180deg, rgba(12, 10, 8, 0.4) 0%, rgba(12, 10, 8, 0.12) 70%);
+  border-color: rgba(232, 196, 148, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
-.ex-zone.lobe-west { border-top-left-radius: 28px; border-bottom-left-radius: 22px; }
-.ex-zone.lobe-east { border-top-right-radius: 28px; border-bottom-right-radius: 18px; }
-.ex-zone.lobe-isthmus { border-radius: 10px; }
 .ex-zone h3 { margin: 2px 0; font-size: 1rem; }
 .ex-zone-title {
   display: flex;
@@ -974,6 +977,7 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   padding: 1px 6px;
   line-height: 1.4;
   white-space: nowrap;
+  text-shadow: none;
 }
 .ex-chip-here { border-color: var(--gold); color: var(--gold); }
 .ex-chip-claimed { border-color: var(--survival); color: #dce6b0; }
@@ -984,18 +988,20 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   border-color: var(--gold);
   box-shadow: inset 0 0 0 2px var(--gold);
   cursor: default;
+  background: linear-gradient(180deg, rgba(20, 16, 12, 0.55) 0%, rgba(20, 16, 12, 0.2) 100%);
 }
 .ex-zone.is-walkable {
   border-color: var(--rust-hot);
   box-shadow: 0 0 0 2px rgba(232, 146, 63, 0.55), 0 0 18px rgba(212, 120, 46, 0.32);
+  background: linear-gradient(180deg, rgba(20, 14, 8, 0.38) 0%, rgba(20, 14, 8, 0.1) 100%);
 }
 .ex-zone.is-here.is-walkable { box-shadow: inset 0 0 0 2px var(--gold); }
-.ex-zone.is-claimed { background: rgba(20, 16, 12, 0.88); }
+.ex-zone.is-claimed { background: linear-gradient(180deg, rgba(20, 16, 12, 0.45) 0%, rgba(20, 16, 12, 0.14) 100%); }
 .ex-zone.is-recallable { border-color: rgba(212, 180, 106, 0.7); }
 .ex-zone.is-distant {
-  background: rgba(16, 12, 10, 0.7);
-  border-color: rgba(232, 196, 148, 0.1);
-  color: var(--faint);
+  background: rgba(12, 10, 8, 0.08);
+  border-color: rgba(232, 196, 148, 0.08);
+  color: rgba(239, 228, 210, 0.78);
   cursor: default;
   box-shadow: none;
 }
@@ -1010,46 +1016,43 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   margin-top: 6px;
 }
 .ex-sea {
-  display: grid;
-  place-items: center;
   z-index: 1;
-  color: rgba(232, 196, 148, 0.42);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: rgba(30, 40, 48, 0.22);
-  border-color: rgba(138, 190, 180, 0.14);
+  background: transparent;
+  border-color: transparent;
+  pointer-events: none;
 }
 
 .ex-glyph {
   display: inline-block;
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  border: 1px solid rgba(232, 196, 148, 0.2);
+  border-radius: 7px;
+  border: 1px solid rgba(232, 196, 148, 0.28);
   background: #141820;
   flex: 0 0 auto;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 }
 .ex-glyph-img {
+  position: absolute;
   display: block;
   max-width: none;
   pointer-events: none;
 }
 .ex-glyph-map {
-  width: 72px;
-  height: 88px;
+  width: 52px;
+  height: 52px;
 }
 .ex-glyph-tunnels .ex-glyph-img {
-  width: 280%;
+  width: calc(1280 / 300 * 100%);
   height: auto;
-  margin-left: -10%;
-  margin-top: -6%;
+  left: calc(-175 / 300 * 100%);
+  top: calc(-20 / 300 * 100%);
 }
 .ex-glyph-crane .ex-glyph-img {
-  width: 240%;
+  width: calc(1280 / 300 * 100%);
   height: auto;
-  margin-left: -98%;
-  margin-top: -4%;
+  left: calc(-710 / 300 * 100%);
+  top: calc(-70 / 300 * 100%);
 }
 .ex-glyph-btn {
   width: 32px;
@@ -1057,8 +1060,6 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   border-radius: 6px;
   margin-right: 6px;
 }
-.ex-glyph-btn.ex-glyph-tunnels .ex-glyph-img { width: 260%; margin-left: -8%; margin-top: -10%; }
-.ex-glyph-btn.ex-glyph-crane .ex-glyph-img { width: 220%; margin-left: -90%; margin-top: -8%; }
 .icon-button:has(.ex-glyph-btn) {
   display: inline-flex;
   align-items: center;
@@ -1069,8 +1070,8 @@ img.stencil.art-glyph {
   object-fit: cover;
   border-radius: 6px;
 }
-img.stencil.art-glyph-tunnels { object-position: 18% 30%; }
-img.stencil.art-glyph-crane { object-position: 78% 40%; }
+img.stencil.art-glyph-tunnels { object-position: 24% 12%; }
+img.stencil.art-glyph-crane { object-position: 62% 18%; }
 
 .base-portrait { margin-top: 8px; }
 .portrait-wrap { display: grid; gap: 8px; }
@@ -1160,7 +1161,7 @@ img.stencil.art-glyph-crane { object-position: 78% 40%; }
 
 @media (max-width: 860px) {
   .expedition-grid { grid-template-columns: 1fr; }
-  .ex-map { grid-template-rows: repeat(3, minmax(84px, auto)); }
+  .ex-map { grid-template-rows: repeat(3, minmax(0, 1fr)); min-height: 220px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
