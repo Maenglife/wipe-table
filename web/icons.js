@@ -123,9 +123,10 @@
       );
     },
     train: function (n) {
-      return svg(
-        '<rect x="8" y="22" width="18" height="16"/><rect x="28" y="18" width="28" height="20"/><circle cx="16" cy="44" r="4"/><circle cx="40" cy="44" r="4"/><circle cx="50" cy="44" r="4"/>',
-        n
+      return (
+        '<img class="stencil art-glyph art-glyph-crane" src="art/toe-crane.png" alt="' +
+        n +
+        '">'
       );
     },
     water: function (n) {
@@ -135,7 +136,11 @@
       );
     },
     tunnels: function (n) {
-      return svg('<path d="M8 48V28c0-12 48-12 48 0v20H44V30c0-6-24-6-24 0v18H8z"/>', n);
+      return (
+        '<img class="stencil art-glyph art-glyph-tunnels" src="art/lattice-spike.png" alt="' +
+        n +
+        '">'
+      );
     },
     plant: function (n) {
       return svg(
