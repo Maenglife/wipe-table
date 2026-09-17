@@ -393,7 +393,6 @@
 
       if (chromeOnly) {
         cell.tabIndex = 0;
-        cell.title = zone.name;
       }
 
       if (both) {

@@ -1035,7 +1035,7 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
 .ex-stamp-svg [stroke] { stroke: currentColor; }
 .ex-here-banner {
   position: absolute;
-  top: 6px;
+  top: 4px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
@@ -1067,20 +1067,20 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
 .ex-chip-recall { border-color: var(--gold); color: var(--muted); }
 .ex-chip-distant { color: var(--faint); border-color: rgba(232, 196, 148, 0.12); }
 .ex-zone.is-icon {
-  background: rgba(12, 10, 8, 0.38);
+  background: rgba(12, 10, 8, 0.2);
 }
 .ex-zone.is-here {
   border-color: transparent;
   box-shadow: none;
   cursor: default;
-  background: rgba(20, 16, 12, 0.55);
-  padding-top: 22px;
+  background: rgba(20, 16, 12, 0.58);
+  padding-top: 28px;
 }
 .ex-zone.is-walkable {
   border-color: var(--rust-hot);
   border-width: 2px;
   box-shadow: none;
-  background: rgba(16, 12, 8, 0.32);
+  background: rgba(16, 12, 8, 0.14);
 }
 .ex-zone.is-claimed:not(.is-chrome):not(.is-here) {
   background: rgba(20, 16, 12, 0.42);
