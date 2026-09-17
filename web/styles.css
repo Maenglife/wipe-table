@@ -1022,25 +1022,43 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
 }
 
 .ex-glyph {
-  display: block;
-  object-fit: cover;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
   border-radius: 8px;
   border: 1px solid rgba(232, 196, 148, 0.2);
   background: #141820;
-}
-.ex-glyph-map {
-  width: 52px;
-  height: 40px;
   flex: 0 0 auto;
 }
-.ex-glyph-crane { object-position: 74% 40%; }
-.ex-glyph-tunnels { object-position: 20% 42%; }
+.ex-glyph-img {
+  display: block;
+  max-width: none;
+  pointer-events: none;
+}
+.ex-glyph-map {
+  width: 72px;
+  height: 88px;
+}
+.ex-glyph-tunnels .ex-glyph-img {
+  width: 280%;
+  height: auto;
+  margin-left: -10%;
+  margin-top: -6%;
+}
+.ex-glyph-crane .ex-glyph-img {
+  width: 240%;
+  height: auto;
+  margin-left: -98%;
+  margin-top: -4%;
+}
 .ex-glyph-btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   margin-right: 6px;
 }
+.ex-glyph-btn.ex-glyph-tunnels .ex-glyph-img { width: 260%; margin-left: -8%; margin-top: -10%; }
+.ex-glyph-btn.ex-glyph-crane .ex-glyph-img { width: 220%; margin-left: -90%; margin-top: -8%; }
 .icon-button:has(.ex-glyph-btn) {
   display: inline-flex;
   align-items: center;
@@ -1051,6 +1069,8 @@ img.stencil.art-glyph {
   object-fit: cover;
   border-radius: 6px;
 }
+img.stencil.art-glyph-tunnels { object-position: 18% 30%; }
+img.stencil.art-glyph-crane { object-position: 78% 40%; }
 
 .base-portrait { margin-top: 8px; }
 .portrait-wrap { display: grid; gap: 8px; }
@@ -1065,15 +1085,30 @@ img.stencil.art-glyph {
 }
 .portrait-bible {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: none;
   pointer-events: none;
 }
-.portrait-plate.shape-1x1 .portrait-bible { object-position: 17% 68%; }
-.portrait-plate.shape-1x2 .portrait-bible { object-position: 50% 68%; }
-.portrait-plate.shape-2x2 .portrait-bible { object-position: 83% 64%; }
+.portrait-plate.shape-1x1 .portrait-bible {
+  inset: auto;
+  width: calc(1280 / 290 * 100%);
+  height: auto;
+  left: calc(-125 / 290 * 100%);
+  top: calc(-245 / 290 * 100%);
+}
+.portrait-plate.shape-1x2 .portrait-bible {
+  inset: auto;
+  width: calc(1280 / 380 * 100%);
+  height: auto;
+  left: calc(-455 / 380 * 100%);
+  top: calc(-245 / 380 * 100%);
+}
+.portrait-plate.shape-2x2 .portrait-bible {
+  inset: auto;
+  width: calc(1280 / 430 * 100%);
+  height: auto;
+  left: calc(-810 / 430 * 100%);
+  top: calc(-220 / 430 * 100%);
+}
 .portrait-svg {
   position: relative;
   z-index: 1;

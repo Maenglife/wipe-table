@@ -159,12 +159,14 @@
   function monumentGlyph(monumentId, extraClass) {
     var spec = MONUMENT_GLYPHS[monumentId];
     if (!spec) return null;
-    var img = make("img", "ex-glyph " + spec.cls + (extraClass ? " " + extraClass : ""));
+    var frame = make("span", "ex-glyph " + spec.cls + (extraClass ? " " + extraClass : ""));
+    var img = make("img", "ex-glyph-img");
     img.src = spec.src;
     img.alt = spec.label;
     img.decoding = "async";
     img.draggable = false;
-    return img;
+    frame.append(img);
+    return frame;
   }
 
   function svgNode(name, attrs) {
@@ -203,7 +205,7 @@
         rx: "2",
         ry: "2",
         class: filled ? "portrait-core is-filled" : "portrait-core",
-        fill: filled ? "rgba(42, 33, 24, 0.62)" : "rgba(18, 16, 12, 0.28)",
+        fill: filled ? "rgba(42, 33, 24, 0.38)" : "rgba(18, 16, 12, 0.12)",
         stroke: filled ? "#d4b46a" : "rgba(232,196,148,0.42)",
         "stroke-width": "2",
       })
