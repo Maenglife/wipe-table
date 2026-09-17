@@ -1019,6 +1019,7 @@
         : null,
       isHere: state.player.location === id,
       claimed: isClaimed(state, id),
+      adjacent: state.player.location !== id && ADJACENT[state.player.location].indexOf(id) !== -1,
       buildable: zone.buildable,
       move: inspectMove(state, id),
       recall: inspectRecall(state, id),

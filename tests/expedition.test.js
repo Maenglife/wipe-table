@@ -443,6 +443,25 @@ describe("ui honesty", () => {
     assert.match(after.nextHint, /Train Yard|Wreck Beach|Search/i);
     assert.doesNotMatch(after.nextHint, /store/i);
   });
+
+  it("exposes adjacent walks and both walk and recall on camp from woods", () => {
+    let state = expedition.createGame({ seed: seedFor("harbor-scrap") });
+    state = apply(state, { type: "build", structure: "shack" });
+    state = apply(state, { type: "move", zoneId: "woods" });
+    const byId = Object.fromEntries(expedition.getView(state).map.map((zone) => [zone.id, zone]));
+    assert.equal(byId.woods.isHere, true);
+    assert.equal(byId.camp.adjacent, true);
+    assert.equal(byId.camp.move.ok, true);
+    assert.equal(byId.camp.recall.ok, true);
+    assert.equal(byId.industrial.adjacent, true);
+    assert.equal(byId.industrial.move.ok, true);
+    assert.equal(byId.industrial.recall.ok, false);
+    assert.equal(byId.far.adjacent, false);
+    assert.equal(byId.far.move.ok, false);
+    assert.match(byId.far.move.reason, /not adjacent/i);
+    assert.equal(byId.wreck.adjacent, false);
+    assert.equal(byId.wreck.move.ok, false);
+  });
 });
 
 describe("resume", () => {

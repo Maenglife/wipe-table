@@ -887,6 +887,20 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   grid-template-rows: repeat(3, minmax(76px, auto));
   gap: 8px;
   margin-top: 12px;
+  position: relative;
+}
+.ex-paths {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.ex-path-line {
+  stroke: var(--rust-hot);
+  stroke-width: 0.07;
+  stroke-linecap: round;
+  opacity: 0.9;
 }
 .ex-zone, .ex-sea {
   border: 1px solid var(--line);
@@ -897,11 +911,59 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
   padding: 8px;
   font: inherit;
 }
-.ex-zone { cursor: pointer; min-height: 76px; }
+.ex-zone { position: relative; z-index: 1; cursor: pointer; min-height: 76px; }
 .ex-zone h3 { margin: 2px 0; font-size: 1rem; }
-.ex-zone.is-here { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
-.ex-zone.is-claimed { background: #1c2418; }
-.ex-zone:disabled { opacity: 0.55; cursor: default; }
+.ex-zone-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  align-items: flex-start;
+}
+.ex-chips { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+.ex-chip {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 6px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.ex-chip-here { border-color: var(--gold); color: var(--gold); }
+.ex-chip-claimed { border-color: var(--survival); color: #dce6b0; }
+.ex-chip-walk { border-color: var(--rust-hot); color: var(--rust-hot); }
+.ex-chip-recall { border-color: var(--gold); color: var(--muted); }
+.ex-chip-distant { color: var(--faint); border-color: rgba(232, 196, 148, 0.12); }
+.ex-zone.is-here {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 2px var(--gold);
+  cursor: default;
+}
+.ex-zone.is-walkable {
+  border-color: var(--rust-hot);
+  box-shadow: 0 0 0 2px rgba(232, 146, 63, 0.55), 0 0 18px rgba(212, 120, 46, 0.32);
+}
+.ex-zone.is-here.is-walkable { box-shadow: inset 0 0 0 2px var(--gold); }
+.ex-zone.is-claimed { background: #14100c; }
+.ex-zone.is-recallable { border-color: rgba(212, 180, 106, 0.7); }
+.ex-zone.is-distant {
+  background: #100c0a;
+  border-color: rgba(232, 196, 148, 0.1);
+  color: var(--faint);
+  cursor: default;
+  box-shadow: none;
+}
+.ex-zone:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.ex-zone-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
 .ex-sea {
   display: grid;
   place-items: center;

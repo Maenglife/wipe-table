@@ -213,33 +213,84 @@
     var map = $("islandMap");
     map.replaceChildren();
     var occupied = {};
+    var hereZone = null;
+    view.map.forEach(function (zone) {
+      if (zone.isHere) hereZone = zone;
+    });
+
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "ex-paths");
+    svg.setAttribute("viewBox", "0 0 3 3");
+    svg.setAttribute("aria-hidden", "true");
+    svg.style.gridColumn = "1 / -1";
+    svg.style.gridRow = "1 / -1";
+
     view.map.forEach(function (zone) {
       occupied[zone.col + "," + zone.row] = true;
-      var btn = make("button", "ex-zone" + (zone.isHere ? " is-here" : "") + (zone.claimed ? " is-claimed" : ""));
-      btn.type = "button";
-      btn.style.gridColumn = String(zone.col);
-      btn.style.gridRow = String(zone.row);
-      btn.append(make("p", "eyebrow", zone.isHere ? "YOU ARE HERE" : zone.claimed ? "CLAIMED" : zone.terrain));
-      btn.append(make("h3", "", zone.name));
+      var canMove = zone.move.ok;
+      var canRecall = zone.recall.ok;
+      var both = canMove && canRecall;
+      var distant = !zone.isHere && !canMove && !canRecall;
+      var fastTravel = canMove && !zone.adjacent;
+      var cls = "ex-zone";
+      if (zone.isHere) cls += " is-here";
+      if (zone.claimed) cls += " is-claimed";
+      if (canMove) cls += " is-walkable";
+      if (canRecall && !canMove) cls += " is-recallable";
+      if (distant) cls += " is-distant";
+
+      var cell = make(both || zone.isHere || distant ? "div" : "button", cls);
+      if (cell.tagName === "BUTTON") cell.type = "button";
+      cell.style.gridColumn = String(zone.col);
+      cell.style.gridRow = String(zone.row);
+
+      var head = make("div", "ex-zone-head");
+      head.append(make("p", "eyebrow", zone.terrain));
+      var chips = make("div", "ex-chips");
+      if (zone.isHere) chips.append(make("span", "ex-chip ex-chip-here", "Here"));
+      else if (zone.claimed) chips.append(make("span", "ex-chip ex-chip-claimed", "Claimed"));
+      if (distant) chips.append(make("span", "ex-chip ex-chip-distant", "Not adjacent"));
+      else if (canMove && !both) chips.append(make("span", "ex-chip ex-chip-walk", fastTravel ? "Fast travel" : "Walk"));
+      else if (canRecall && !canMove) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
+      if (chips.childNodes.length) head.append(chips);
+      cell.append(head);
+      cell.append(make("h3", "", zone.name));
       var bits = [];
       if (zone.monument) bits.push(zone.monument.name);
       var nodes = nodeLabel(zone.nodes);
       if (nodes) bits.push(nodes);
-      btn.append(make("p", "help", bits.join(" · ") || "Quiet ground."));
-      var canMove = zone.move.ok;
-      var canRecall = zone.recall.ok;
-      btn.disabled = !canMove && !canRecall && !zone.isHere;
-      if (zone.isHere) btn.title = "Current zone";
-      else if (canMove) btn.title = "Walk to " + zone.name;
-      else if (canRecall) btn.title = "Recall to " + zone.name;
-      else btn.title = zone.move.reason || zone.recall.reason || "Cannot travel here";
-      btn.addEventListener("click", function () {
-        if (zone.isHere) return;
-        if (canMove) act({ type: "move", zoneId: zone.id });
-        else if (canRecall) act({ type: "recall", zoneId: zone.id });
-      });
-      map.append(btn);
+      cell.append(make("p", "help", bits.join(" · ") || "Quiet ground."));
+
+      if (both) {
+        var actions = make("div", "ex-zone-actions");
+        addActionButton(actions, "Walk", zone.move, { type: "move", zoneId: zone.id }, "small-button");
+        addActionButton(actions, "Recall", zone.recall, { type: "recall", zoneId: zone.id }, "small-button");
+        cell.append(actions);
+      } else if (cell.tagName === "BUTTON") {
+        cell.disabled = !canMove && !canRecall;
+        if (zone.isHere) cell.title = "You are here";
+        else if (canMove) cell.title = (fastTravel ? "Fast travel to " : "Walk to ") + zone.name;
+        else if (canRecall) cell.title = "Recall to " + zone.name;
+        else cell.title = "Not adjacent";
+        cell.addEventListener("click", function () {
+          if (zone.isHere || distant) return;
+          if (canMove) act({ type: "move", zoneId: zone.id });
+          else if (canRecall) act({ type: "recall", zoneId: zone.id });
+        });
+      }
+
+      if (hereZone && canMove && zone.adjacent) {
+        var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", String(hereZone.col - 0.5));
+        line.setAttribute("y1", String(hereZone.row - 0.5));
+        line.setAttribute("x2", String(zone.col - 0.5));
+        line.setAttribute("y2", String(zone.row - 0.5));
+        line.setAttribute("class", "ex-path-line");
+        svg.appendChild(line);
+      }
+      map.append(cell);
     });
+
     for (var col = 1; col <= 3; col++) {
       for (var row = 1; row <= 3; row++) {
         if (occupied[col + "," + row]) continue;
@@ -249,6 +300,7 @@
         map.append(sea);
       }
     }
+    map.append(svg);
   }
 
   function renderObjective(view) {
