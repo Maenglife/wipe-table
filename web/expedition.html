@@ -57,6 +57,7 @@
         </div>
         <div class="wipe-actions">
           <span class="mode-badge" id="seedBadge"></span>
+          <button type="button" id="endDayBtn" class="icon-button">End day</button>
           <button type="button" id="newWipeBtn" class="icon-button">New wipe</button>
         </div>
       </div>
@@ -64,39 +65,32 @@
       <section id="objective" class="skiff-strip" aria-labelledby="objectiveHeading">
         <h2 id="objectiveHeading" class="sr-only">Extraction skiff</h2>
         <div id="objectiveTrack" class="skiff-pips" role="list"></div>
-        <p class="skiff-status" id="objectiveHelp">Walk to Wreck Beach to identify the skiff. Search Train Yard and Military Tunnels for parts. Prepare fuel, assemble, extract.</p>
+        <p class="skiff-status" id="objectiveHelp"></p>
       </section>
 
       <p class="layout-hook" id="layoutHook"></p>
 
       <div class="expedition-grid">
-        <section class="play-panel" aria-labelledby="mapHeading">
+        <section class="play-panel island-panel" aria-labelledby="mapHeading">
           <div class="panel-head">
             <h2 id="mapHeading">Island</h2>
-            <p class="help" id="mapHelp">HERE is you. Walkable ground is an icon with a path. Distant island is chrome — name on hover. If Walk and Recall both show, pick one.</p>
+            <p class="help" id="mapHelp">The island is the board. Click adjacent ground to walk. Click HERE for that tile’s acts. A claimed bed Recalls when you are away. Distant chrome is name-only.</p>
           </div>
           <div id="islandMap" class="ex-map"></div>
         </section>
 
-        <section class="play-panel" aria-labelledby="baseHeading">
+        <section class="play-panel base-panel" aria-labelledby="baseHeading">
           <div class="panel-head">
             <h2 id="baseHeading">Base</h2>
-            <p class="help">A 1×1 holds a station. Extra rooms are optional comfort, never an extract gate.</p>
+            <p class="help">Grow after the 1×1. Stations live in rooms. Pack chips sit on the portrait edge.</p>
           </div>
-          <div id="basePortrait" class="base-portrait"></div>
-          <div id="inventory" class="player-stats"></div>
-          <p class="help" id="kitLine"></p>
+          <div class="portrait-stack">
+            <div id="basePortrait" class="base-portrait"></div>
+            <div id="inventory" class="inv-rail" aria-label="Pack"></div>
+          </div>
+          <div id="growBox" class="grow-box"></div>
         </section>
       </div>
-
-      <section class="play-panel expedition-actions" aria-labelledby="actionsHeading">
-        <div class="panel-head">
-          <h2 id="actionsHeading">Actions</h2>
-          <p class="help" id="actionHint">Drop a 1×1, then gather. Four actions make a day.</p>
-        </div>
-        <div id="actionBox" class="action-box"></div>
-        <p class="action-reason" id="turnReasons"></p>
-      </section>
 
       <section class="play-panel" aria-labelledby="logHeading">
         <h2 id="logHeading">Log</h2>
@@ -141,9 +135,9 @@
         <li><strong>Opportunity</strong> — repair the extraction skiff and choose when to leave.</li>
       </ul>
       <h3>A day</h3>
-      <p>Four actions: walk, gather, build, craft, install, search, recall, assemble, or extract. Searching monuments is scavenging, not a fight.</p>
+      <p>Four actions, all from the island: click adjacent ground to walk, click HERE to gather/search/build on that tile, click a claimed bed to recall, click the wreck skiff to extract when it is ready. Searching monuments is scavenging, not a fight.</p>
       <h3>The skiff</h3>
-      <p>Visit Wreck Beach to identify it. Pontoon plate from Train Yard, starter coil from Military Tunnels, fuel kit crafted at a claimed site (1 metal or scrap + 1 wood, or a slower raw pile). Assemble on the beach, then extract.</p>
+      <p>It sits on Wreck Beach. Identify it there. Pontoon plate from Train Yard, starter coil from Military Tunnels, fuel kit crafted at a claimed site (1 metal or scrap + 1 wood, or a slower raw pile). Assemble on the beach, then click the skiff to extract.</p>
       <h3>Demo seeds</h3>
       <p><code>wipe-1</code> is Harbor scrap (compact recycler). <code>wipe-4</code> is Inland ore (furnace at camp, ridge haul). <code>wipe-0</code> is Long route (outpost).</p>
     </div>

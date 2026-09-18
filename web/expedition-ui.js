@@ -91,10 +91,26 @@
     $(id).hidden = hidden;
   }
 
-  function chip(label, value) {
-    var span = make("span", "stat-chip");
-    span.append(make("em", "", label), document.createTextNode(String(value)));
-    return span;
+  function kitName(id) {
+    return (game.BLUEPRINTS[id] && game.BLUEPRINTS[id].name) || id;
+  }
+
+  function invChip(key, value, label, extraClass) {
+    var chipEl = make("span", "inv-chip" + (Number(value) === 0 ? " is-zero" : "") + (extraClass ? " " + extraClass : ""));
+    var markHtml =
+      window.WipeIcons && window.WipeIcons.resourceMark && window.WipeIcons.resourceMark(key, label || key);
+    if (!markHtml && window.WipeIcons && window.WipeIcons.ICONS && window.WipeIcons.ICONS[key]) {
+      markHtml = window.WipeIcons.ICONS[key](label || key);
+    }
+    if (markHtml) {
+      var icon = make("span", "inv-icon");
+      icon.innerHTML = markHtml;
+      chipEl.append(icon);
+    }
+    chipEl.append(make("span", "inv-count", String(value)));
+    chipEl.title = (label || key) + ": " + value;
+    chipEl.setAttribute("aria-label", (label || key) + " " + value);
+    return chipEl;
   }
 
   function setButton(button, check) {
@@ -202,21 +218,22 @@
     );
   }
 
-  function roomSquare(svg, x, y, w, h, label, filled) {
-    svg.appendChild(
-      svgNode("rect", {
-        x: String(x),
-        y: String(y),
-        width: String(w),
-        height: String(h),
-        rx: "2",
-        ry: "2",
-        class: filled ? "portrait-core is-filled" : "portrait-core",
-        fill: filled ? "rgba(42, 33, 24, 0.38)" : "rgba(18, 16, 12, 0.12)",
-        stroke: filled ? "#d4b46a" : "rgba(232,196,148,0.42)",
-        "stroke-width": "2",
-      })
-    );
+  function roomSquare(svg, x, y, w, h, label, filled, onAct) {
+    var cls = filled ? "portrait-core is-filled" : "portrait-core";
+    if (onAct) cls += " is-act";
+    var rect = svgNode("rect", {
+      x: String(x),
+      y: String(y),
+      width: String(w),
+      height: String(h),
+      rx: "2",
+      ry: "2",
+      class: cls,
+      fill: filled ? "rgba(42, 33, 24, 0.38)" : "rgba(18, 16, 12, 0.12)",
+      stroke: filled ? "#d4b46a" : "rgba(232,196,148,0.42)",
+      "stroke-width": "2",
+    });
+    svg.appendChild(rect);
     var t = svgNode("text", {
       x: String(x + w / 2),
       y: String(y + h / 2 + 5),
@@ -227,9 +244,15 @@
     });
     t.textContent = label;
     svg.appendChild(t);
+    if (onAct) {
+      rect.addEventListener("click", onAct);
+      t.addEventListener("click", onAct);
+      t.style.cursor = "pointer";
+    }
   }
 
-  function renderPortrait(base) {
+  function renderPortrait(view) {
+    var base = view.base;
     var wrap = make("div", "portrait-wrap");
     var rooms = (base.camp && base.camp.rooms) || [];
     var shape = (base.camp && base.camp.shape) || "none";
@@ -256,10 +279,36 @@
       return rooms[i] && rooms[i].station;
     }
 
+    function roomAct(i, station) {
+      if (view.ended || view.location !== "camp") return null;
+      if (!station && view.actions.install.ok) {
+        return function () {
+          act({ type: "install", roomIndex: i });
+        };
+      }
+      if (station === "furnace") {
+        var smelt = game.inspectAction(state, { type: "craft", recipeId: "smelt" });
+        if (smelt.ok) {
+          return function () {
+            act({ type: "craft", recipeId: "smelt" });
+          };
+        }
+      }
+      if (station === "recycler") {
+        var recycle = game.inspectAction(state, { type: "craft", recipeId: "recycle" });
+        if (recycle.ok) {
+          return function () {
+            act({ type: "craft", recipeId: "recycle" });
+          };
+        }
+      }
+      return null;
+    }
+
     if (shape === "none") {
       roomSquare(svg, 40, 70, 120, 60, "empty beach", false);
     } else if (shape === "1x1") {
-      roomSquare(svg, 55, 48, 90, 90, stationLabel(room(0)), !!room(0));
+      roomSquare(svg, 55, 48, 90, 90, stationLabel(room(0)), !!room(0), roomAct(0, room(0)));
       svg.appendChild(
         svgNode("rect", {
           x: "92",
@@ -273,14 +322,14 @@
         })
       );
     } else if (shape === "1x2") {
-      roomSquare(svg, 18, 48, 80, 90, stationLabel(room(0)), !!room(0));
-      roomSquare(svg, 102, 48, 80, 90, stationLabel(room(1)), !!room(1));
+      roomSquare(svg, 18, 48, 80, 90, stationLabel(room(0)), !!room(0), roomAct(0, room(0)));
+      roomSquare(svg, 102, 48, 80, 90, stationLabel(room(1)), !!room(1), roomAct(1, room(1)));
       plugTriangle(svg, 100, 140, "s", 22);
     } else {
-      roomSquare(svg, 40, 36, 58, 58, stationLabel(room(0)), !!room(0));
-      roomSquare(svg, 102, 36, 58, 58, stationLabel(room(1)), !!room(1));
-      roomSquare(svg, 40, 98, 58, 58, stationLabel(room(2)), !!room(2));
-      roomSquare(svg, 102, 98, 58, 58, stationLabel(room(3)), !!room(3));
+      roomSquare(svg, 40, 36, 58, 58, stationLabel(room(0)), !!room(0), roomAct(0, room(0)));
+      roomSquare(svg, 102, 36, 58, 58, stationLabel(room(1)), !!room(1), roomAct(1, room(1)));
+      roomSquare(svg, 40, 98, 58, 58, stationLabel(room(2)), !!room(2), roomAct(2, room(2)));
+      roomSquare(svg, 102, 98, 58, 58, stationLabel(room(3)), !!room(3), roomAct(3, room(3)));
       plugTriangle(svg, 70, 34, "n", 16);
       plugTriangle(svg, 130, 34, "n", 16);
       plugTriangle(svg, 38, 66, "w", 16);
@@ -304,6 +353,185 @@
       }).join(", ") + "."));
     }
     return wrap;
+  }
+
+  function craftRank(id) {
+    if (id === "fuel-kit") return 0;
+    if (id === "smelt") return 1;
+    if (id === "recycle") return 2;
+    if (id === "sleeping-bag" || id === "stone-hatchet") return 8;
+    return 3;
+  }
+
+  function hereActs(view, zone) {
+    var acts = [];
+    var reason = "";
+    if (!zone.isHere || view.ended) {
+      return { acts: acts, reason: view.ended ? (view.ended.ending || "") : "" };
+    }
+
+    function add(label, check, action, className, decorate) {
+      if (check && check.ok) {
+        acts.push({
+          label: label,
+          check: check,
+          action: action,
+          className: className,
+          decorate: decorate,
+        });
+      }
+    }
+
+    if (zone.id === "camp" && view.base.camp.shape === "none") {
+      add(
+        "Drop 1×1",
+        view.actions.build.shack,
+        { type: "build", structure: "shack" },
+        view.actions.build.shack.ok ? "primary-button" : "small-button"
+      );
+      if (!view.actions.build.shack.ok) reason = view.actions.build.shack.reason;
+    }
+
+    if (zone.id === "wreck") {
+      if (view.actions.assemble.ok) {
+        add("Assemble", view.actions.assemble, { type: "assemble" }, "primary-button");
+      } else if (view.boat.seen && !view.actions.extract.ok) {
+        reason = view.actions.assemble.reason || view.actions.extract.reason;
+      }
+    }
+
+    if (view.actions.explore.ok) {
+      var searchLabel = "Search here";
+      if (zone.id === "wreck" && !view.boat.seen) searchLabel = "Identify wreck";
+      else if (zone.monument) searchLabel = "Search " + zone.monument.name;
+      add(searchLabel, view.actions.explore, { type: "explore" }, "small-button", function (btn) {
+        if (zone.monument) {
+          var searchGlyph = monumentGlyph(zone.monument.id, "ex-glyph-btn");
+          if (searchGlyph) btn.prepend(searchGlyph);
+        }
+      });
+    }
+
+    if (view.actions.install.ok) {
+      add("Install " + kitName(view.actions.install.kit), view.actions.install, { type: "install" });
+    }
+
+    var crafts = [];
+    view.actions.craft.forEach(function (entry) {
+      if (entry.id === "smelt" && view.known.indexOf("furnace") === -1) return;
+      if (entry.id === "recycle" && view.known.indexOf("recycler") === -1) return;
+      if (!entry.known && entry.id !== "fuel-kit") return;
+      if (!entry.craft || !entry.craft.ok) return;
+      var label = entry.name;
+      if (entry.id === "smelt") label = "Smelt ore";
+      if (entry.id === "recycle") label = "Recycle";
+      if (entry.id === "fuel-kit") label = "Prepare fuel";
+      crafts.push({
+        rank: craftRank(entry.id),
+        label: label,
+        check: entry.craft,
+        action: { type: "craft", recipeId: entry.id },
+      });
+    });
+    crafts.sort(function (a, b) {
+      return a.rank - b.rank;
+    });
+    crafts.forEach(function (row) {
+      add(row.label, row.check, row.action);
+    });
+
+    if (view.base.camp.shape !== "none" && zone.id !== "camp" && zone.buildable) {
+      add("Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
+    }
+
+    var keys = (view.actions.gather.resources || []).slice();
+    if (view.actions.gather.ok && keys.length) {
+      keys.forEach(function (resource) {
+        var check = game.inspectAction(state, { type: "gather", resource: resource });
+        add("Take " + resource, check, { type: "gather", resource: resource });
+      });
+    } else if (!view.actions.gather.ok && keys.length && !reason) {
+      reason = view.actions.gather.reason;
+    }
+
+    if (acts.length > 3) acts = acts.slice(0, 3);
+    return { acts: acts, reason: reason };
+  }
+
+  function activateZone(zone) {
+    if (zone.isHere) return;
+    if (zone.move.ok && zone.adjacent) {
+      act({ type: "move", zoneId: zone.id });
+      return;
+    }
+    if (zone.recall.ok) {
+      act({ type: "recall", zoneId: zone.id });
+      return;
+    }
+    if (zone.move.ok) {
+      act({ type: "move", zoneId: zone.id });
+    }
+  }
+
+  function armZone(cell, zone) {
+    var walkable = zone.move.ok;
+    var recallable = zone.recall.ok;
+    var chromeOnly = !zone.isHere && !walkable && !recallable && !zone.claimed && zone.id !== "wreck";
+    cell.tabIndex = 0;
+    if (chromeOnly) return;
+    cell.addEventListener("click", function (event) {
+      if (event.target.closest("button")) return;
+      activateZone(zone);
+    });
+    cell.addEventListener("keydown", function (event) {
+      if (event.target !== cell) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      if (zone.isHere) {
+        var first = cell.querySelector(".ex-tile-acts button, .ex-skiff.is-ready");
+        if (first) first.focus();
+        return;
+      }
+      activateZone(zone);
+    });
+  }
+
+  function skiffMiniPips(view) {
+    var row = make("div", "ex-skiff-pips");
+    [
+      ["pontoon", "Pontoon plate"],
+      ["coil", "Starter coil"],
+      ["fuel", "Fuel kit"],
+      ["assembled", "Assembled"],
+    ].forEach(function (pair) {
+      var have = pair[0] === "assembled" ? view.boat.assembled : view.boat.parts[pair[0]];
+      var pip = make("span", "ex-skiff-pip" + (have ? " is-have" : ""));
+      pip.title = pair[1] + (have ? " — have" : " — missing");
+      pip.setAttribute("aria-label", pair[1] + (have ? ", have" : ", missing"));
+      row.append(pip);
+    });
+    return row;
+  }
+
+  function renderWreckSkiff(cell, view, zone) {
+    var ready = zone.isHere && view.actions.extract.ok;
+    var skiff = make(ready ? "button" : "div", "ex-skiff" + (ready ? " is-ready" : ""));
+    if (ready) {
+      skiff.type = "button";
+      skiff.setAttribute("aria-label", "Extract on the assembled skiff");
+      skiff.addEventListener("click", function (event) {
+        event.stopPropagation();
+        act({ type: "extract" });
+      });
+    } else {
+      skiff.setAttribute("aria-label", "Extraction skiff");
+    }
+    skiff.append(skiffMiniPips(view));
+    skiff.append(zoneStamp(zone));
+    if (ready) {
+      skiff.append(make("span", "ex-skiff-extract primary-button", "Extract"));
+    }
+    cell.append(skiff);
   }
 
   function renderMap(view) {
@@ -335,14 +563,12 @@
       occupied[zone.col + "," + zone.row] = true;
       var canMove = zone.move.ok;
       var canRecall = zone.recall.ok;
-      var both = canMove && canRecall;
       var distant = !zone.isHere && !canMove && !canRecall;
-      var chromeOnly = distant && !zone.claimed;
-      var iconTile = zone.isHere || canMove;
+      var chromeOnly = distant && !zone.claimed && zone.id !== "wreck";
+      var iconTile = zone.isHere || canMove || canRecall || zone.id === "wreck";
       var fastTravel = canMove && !zone.adjacent;
-      var clickable = (canMove || canRecall) && !both && !zone.isHere;
       var cls = "ex-zone";
-      if (zone.isHere) cls += " is-here";
+      if (zone.isHere) cls += " is-here is-selected";
       if (zone.claimed) cls += " is-claimed";
       if (canMove) cls += " is-walkable";
       if (canRecall && !canMove) cls += " is-recallable";
@@ -350,14 +576,32 @@
       else if (distant) cls += " is-distant is-solid";
       if (iconTile) cls += " is-icon";
       if (zone.monument) cls += " has-monument";
+      if (zone.id === "wreck") cls += " has-skiff";
 
-      var cell = make(clickable ? "button" : "div", cls);
-      if (cell.tagName === "BUTTON") cell.type = "button";
+      var cell = make("div", cls);
       cell.style.gridColumn = String(zone.col);
       cell.style.gridRow = String(zone.row);
       cell.dataset.zone = zone.id;
       if (zone.monument) cell.dataset.monument = zone.monument.id;
-      cell.setAttribute("aria-label", zone.isHere ? zone.name + ", you are here" : zone.name);
+      if (zone.isHere) {
+        cell.setAttribute("role", "group");
+        cell.setAttribute("aria-current", "location");
+        cell.setAttribute("aria-label", zone.name + ", you are here");
+      } else if (canMove && zone.adjacent) {
+        cell.setAttribute("role", "button");
+        cell.setAttribute("aria-label", "Walk to " + zone.name);
+        cell.title = (fastTravel ? "Fast travel to " : "Walk to ") + zone.name;
+      } else if (canRecall && !zone.adjacent) {
+        cell.setAttribute("role", "button");
+        cell.setAttribute("aria-label", "Recall to " + zone.name);
+        cell.title = "Recall to " + zone.name;
+      } else if (canMove) {
+        cell.setAttribute("role", "button");
+        cell.setAttribute("aria-label", (fastTravel ? "Fast travel to " : "Walk to ") + zone.name);
+        cell.title = (fastTravel ? "Fast travel to " : "Walk to ") + zone.name;
+      } else {
+        cell.setAttribute("aria-label", zone.name);
+      }
 
       if (zone.isHere) {
         var hereMark = make("span", "ex-here-banner", "HERE");
@@ -365,7 +609,11 @@
         cell.append(hereMark);
       }
 
-      if (iconTile) cell.append(zoneStamp(zone));
+      if (zone.id === "wreck") {
+        renderWreckSkiff(cell, view, zone);
+      } else if (iconTile) {
+        cell.append(zoneStamp(zone));
+      }
 
       var titleRow = make("div", "ex-zone-title");
       titleRow.append(make("p", "ex-zone-caption", zone.name));
@@ -388,26 +636,27 @@
 
       var chips = make("div", "ex-chips");
       if (zone.claimed && !zone.isHere) chips.append(make("span", "ex-chip ex-chip-claimed", "Claimed"));
-      if (canRecall && !canMove) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
+      if (canRecall && !zone.isHere && !zone.adjacent) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
       if (chips.childNodes.length) cell.append(chips);
 
-      if (chromeOnly) {
-        cell.tabIndex = 0;
+      if (zone.isHere) {
+        var board = hereActs(view, zone);
+        if (board.acts.length) {
+          var tileActs = make("div", "ex-tile-acts");
+          board.acts.forEach(function (item) {
+            var btn = addActionButton(tileActs, item.label, item.check, item.action, item.className);
+            if (item.decorate) item.decorate(btn);
+          });
+          cell.append(tileActs);
+        }
+        if (board.reason) cell.append(make("p", "ex-tile-reason", board.reason));
+      } else if (canRecall && !zone.adjacent) {
+        var recallActs = make("div", "ex-tile-acts");
+        addActionButton(recallActs, "Recall", zone.recall, { type: "recall", zoneId: zone.id }, "small-button");
+        cell.append(recallActs);
       }
 
-      if (both) {
-        var actions = make("div", "ex-zone-actions");
-        addActionButton(actions, "Walk", zone.move, { type: "move", zoneId: zone.id }, "small-button");
-        addActionButton(actions, "Recall", zone.recall, { type: "recall", zoneId: zone.id }, "small-button");
-        cell.append(actions);
-      } else if (clickable) {
-        if (canMove) cell.title = (fastTravel ? "Fast travel to " : "Walk to ") + zone.name;
-        else cell.title = "Recall to " + zone.name;
-        cell.addEventListener("click", function () {
-          if (canMove) act({ type: "move", zoneId: zone.id });
-          else if (canRecall) act({ type: "recall", zoneId: zone.id });
-        });
-      }
+      armZone(cell, zone);
 
       if (hereZone && canMove && zone.adjacent) {
         var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -446,7 +695,7 @@
   function renderObjective(view) {
     $("objectiveHelp").textContent = view.boat.seen
       ? view.boat.status
-      : "Walk to Wreck Beach and search the ribs to identify the boat.";
+      : "Skiff on Wreck Beach — walk there to identify it.";
     var track = $("objectiveTrack");
     track.replaceChildren();
     function pip(name, have, hint) {
@@ -468,146 +717,44 @@
     var box = $("inventory");
     box.replaceChildren();
     game.RESOURCES.forEach(function (key) {
-      box.append(chip(key, view.inventory[key]));
+      box.append(invChip(key, view.inventory[key], key));
     });
-    box.append(chip("Pack", view.carried + " / " + view.cap));
-    box.append(chip("Hatchet", view.hatchet ? "Yes" : "No"));
-    $("kitLine").textContent = view.kits.length
-      ? "Kits in pack: " + view.kits.join(", ") + ". Install into an empty room."
-      : "No kits waiting. Discover, craft, then install.";
+    box.append(invChip("pack", view.carried + "/" + view.cap, "Pack"));
+    if (view.hatchet) box.append(invChip("hatchet", 1, "Hatchet", "is-tool"));
+    view.kits.forEach(function (id) {
+      var bp = game.BLUEPRINTS[id];
+      box.append(invChip(bp && bp.icon ? bp.icon : "crate", 1, kitName(id), "is-kit"));
+    });
   }
 
   function addActionButton(parent, label, check, action, className) {
     var btn = make("button", className || "small-button", label);
     btn.type = "button";
     setButton(btn, check);
-    btn.addEventListener("click", function () {
+    btn.addEventListener("click", function (event) {
+      event.stopPropagation();
       act(action);
     });
     parent.append(btn);
     return btn;
   }
 
-  function renderActions(view) {
-    var box = $("actionBox");
+  function renderGrow(view) {
+    var box = $("growBox");
     box.replaceChildren();
-
-    var legal = [];
-    var blocked = [];
-    var here = view.map.filter(function (zone) {
-      return zone.isHere;
-    })[0];
-
-    function queue(label, check, action, className, decorate) {
-      var item = {
-        label: label,
-        check: check || { ok: false, reason: "Unavailable." },
-        action: action,
-        className: className,
-        decorate: decorate,
-      };
-      if (item.check.ok) legal.push(item);
-      else blocked.push(item);
-    }
-
-    var keys = (view.actions.gather.resources || []).slice();
-    if (!keys.length) {
-      queue("Gather", view.actions.gather, { type: "gather" });
-    } else {
-      keys.forEach(function (resource) {
-        queue(
-          "Take " + resource,
-          game.inspectAction(state, { type: "gather", resource: resource }),
-          { type: "gather", resource: resource }
-        );
-      });
-    }
-
-    if (view.base.camp.shape === "none") {
-      queue(
-        "Drop 1×1",
-        view.actions.build.shack,
-        { type: "build", structure: "shack" },
-        view.actions.build.shack.ok ? "primary-button" : "small-button"
-      );
-    }
+    if (view.ended || view.location !== "camp") return;
+    if (!view.showExpand["expand-1x2"] && !view.showExpand["expand-2x2"]) return;
+    var details = make("details", "grow-base");
+    details.append(make("summary", "", "Grow"));
+    var row = make("div", "grow-base-actions");
     if (view.showExpand["expand-1x2"]) {
-      queue("Expand 1×2", view.actions.build["expand-1x2"], { type: "build", structure: "expand-1x2" });
+      addActionButton(row, "Expand 1×2", view.actions.build["expand-1x2"], { type: "build", structure: "expand-1x2" });
     }
     if (view.showExpand["expand-2x2"]) {
-      queue("Square 2×2", view.actions.build["expand-2x2"], { type: "build", structure: "expand-2x2" });
+      addActionButton(row, "Square 2×2", view.actions.build["expand-2x2"], { type: "build", structure: "expand-2x2" });
     }
-    if (view.base.camp.shape !== "none" && view.location !== "camp") {
-      queue("Plant outpost", view.actions.build.outpost, { type: "build", structure: "outpost" });
-    }
-
-    view.actions.craft.forEach(function (entry) {
-      if (entry.id === "smelt" && view.known.indexOf("furnace") === -1) return;
-      if (entry.id === "recycle" && view.known.indexOf("recycler") === -1) return;
-      if (!entry.known && entry.id !== "fuel-kit") return;
-      var label = entry.name;
-      if (entry.id === "smelt") label = "Smelt ore";
-      if (entry.id === "recycle") label = "Recycle components";
-      if (entry.id === "fuel-kit") label = "Prepare fuel kit";
-      queue(label, entry.craft, { type: "craft", recipeId: entry.id });
-    });
-    if (view.kits.length) {
-      var installLabel = view.actions.install.kit ? "Install " + view.actions.install.kit : "Install kit";
-      queue(installLabel, view.actions.install, { type: "install" });
-    }
-
-    var searchLabel = "Search here";
-    if (view.location === "wreck" && !view.boat.seen) searchLabel = "Identify wreck";
-    else if (here && here.monument) searchLabel = "Search " + here.monument.name;
-    queue("Recall camp", view.actions.recallCamp, { type: "recall", zoneId: "camp" }, "icon-button");
-    queue(searchLabel, view.actions.explore, { type: "explore" }, "icon-button", function (btn) {
-      if (here && here.monument) {
-        var searchGlyph = monumentGlyph(here.monument.id, "ex-glyph-btn");
-        if (searchGlyph) btn.prepend(searchGlyph);
-      }
-    });
-    queue("Assemble skiff", view.actions.assemble, { type: "assemble" }, "icon-button");
-    queue(
-      "Extract",
-      view.actions.extract,
-      { type: "extract" },
-      view.extractPrimary && view.actions.extract.ok ? "primary-button" : "icon-button"
-    );
-    queue("End day", view.actions.endDay, { type: "endDay" }, "icon-button");
-
-    var now = make("div", "action-row action-now");
-    now.append(make("p", "field-label", "Available now"));
-    if (!legal.length) {
-      now.append(make("p", "help", view.ended ? view.ended.ending : "Nothing legal this beat."));
-    } else {
-      legal.forEach(function (item) {
-        var btn = addActionButton(now, item.label, item.check, item.action, item.className);
-        if (item.decorate) item.decorate(btn);
-      });
-    }
-    box.append(now);
-
-    if (blocked.length) {
-      var why = make("details", "why-not");
-      why.append(make("summary", "", "Why not"));
-      var list = make("ul", "why-not-list");
-      blocked.forEach(function (item) {
-        var row = make("li", "why-not-row");
-        row.append(make("strong", "", item.label));
-        row.append(document.createTextNode(" — "));
-        row.append(make("span", "why-not-reason", item.check.reason || "Unavailable."));
-        list.append(row);
-      });
-      why.append(list);
-      box.append(why);
-    }
-
-    $("actionHint").textContent =
-      view.nextHint +
-      " · " +
-      view.actionsLeft +
-      " actions left today.";
-    $("turnReasons").textContent = view.ended ? view.ended.ending : view.nextHint;
+    details.append(row);
+    box.append(details);
   }
 
   function renderLog(view) {
@@ -654,11 +801,12 @@
     $("seedBadge").textContent = "Seed " + view.seed;
     $("layoutHook").textContent = view.hook;
     $("basePortrait").dataset.shape = view.base.camp.shape || "none";
-    $("basePortrait").replaceChildren(renderPortrait(view.base));
+    $("basePortrait").replaceChildren(renderPortrait(view));
     renderMap(view);
     renderObjective(view);
     renderInventory(view);
-    renderActions(view);
+    renderGrow(view);
+    setButton($("endDayBtn"), view.actions.endDay);
     renderLog(view);
     renderEnd(view);
   }
@@ -723,6 +871,9 @@
       startWipe($("seedInput").value.trim());
     });
     $("newWipeBtn").addEventListener("click", showLobby);
+    $("endDayBtn").addEventListener("click", function () {
+      act({ type: "endDay" });
+    });
     $("endAgain").addEventListener("click", function () {
       $("endDialog").close();
       showLobby();

@@ -276,5 +276,66 @@
     return draw ? draw(name || zoneId) : "";
   }
 
-  root.WipeIcons = { cardIcon: cardIcon, ICONS: ICONS, zoneStamp: zoneStamp, ZONE_STAMPS: ZONE_STAMPS };
+  function markSvg(body, label) {
+    return (
+      '<svg class="inv-mark" viewBox="0 0 24 24" role="img" aria-label="' +
+      label +
+      '" xmlns="http://www.w3.org/2000/svg">' +
+      body +
+      "</svg>"
+    );
+  }
+
+  var RESOURCE_MARKS = {
+    wood: function (n) {
+      return markSvg('<path d="M5 19l6-14h2l6 14H5zm5-7h4" fill="currentColor"/>', n || "wood");
+    },
+    stone: function (n) {
+      return markSvg('<path d="M3 17l5-9 4 4 3-7 6 12H3z" fill="currentColor"/>', n || "stone");
+    },
+    cloth: function (n) {
+      return markSvg(
+        '<path d="M5 7h14v3l-2 10H7L5 10V7z" fill="currentColor"/><path d="M8 7V5h8v2" fill="none" stroke="currentColor" stroke-width="2"/>',
+        n || "cloth"
+      );
+    },
+    ore: function (n) {
+      return markSvg('<path d="M12 3l7 6-3 12H8L5 9z" fill="currentColor"/>', n || "ore");
+    },
+    components: function (n) {
+      return markSvg(
+        '<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="7" y="13" width="10" height="8" rx="1"/>',
+        n || "components"
+      );
+    },
+    metal: function (n) {
+      return markSvg('<path d="M4 16V8l8-4 8 4v8l-8 4z" fill="currentColor"/>', n || "metal");
+    },
+    scrap: function (n) {
+      return markSvg(
+        '<path d="M4 18l5-8 3 3 4-9 4 14H4z" fill="none" stroke="currentColor" stroke-width="2"/>',
+        n || "scrap"
+      );
+    },
+    pack: function (n) {
+      return markSvg(
+        '<path d="M6 9h12l-1.2 11H7.2z" fill="currentColor"/><path d="M9 9V6h6v3" fill="none" stroke="currentColor" stroke-width="2"/>',
+        n || "pack"
+      );
+    },
+  };
+
+  function resourceMark(key, name) {
+    var draw = RESOURCE_MARKS[key];
+    return draw ? draw(name || key) : "";
+  }
+
+  root.WipeIcons = {
+    cardIcon: cardIcon,
+    ICONS: ICONS,
+    zoneStamp: zoneStamp,
+    ZONE_STAMPS: ZONE_STAMPS,
+    resourceMark: resourceMark,
+    RESOURCE_MARKS: RESOURCE_MARKS,
+  };
 })(typeof self !== "undefined" ? self : this);
