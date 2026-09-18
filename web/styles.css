@@ -1085,6 +1085,7 @@ dialog::backdrop { background: rgba(6, 4, 3, 0.72); }
 }
 .ex-zone.is-here .ex-stamp { width: 30px; height: 30px; }
 .ex-zone.is-here .ex-zone-caption { font-size: 0.78rem; }
+.ex-zone.is-here .ex-glyph-map { width: 28px; height: 28px; }
 .ex-zone.is-walkable {
   border-color: var(--rust-hot);
   border-width: 2px;

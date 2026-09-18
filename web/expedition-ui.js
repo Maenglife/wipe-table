@@ -401,15 +401,10 @@
     }
 
     if (view.actions.explore.ok) {
-      var searchLabel = "Search here";
+      var searchLabel = "Search";
       if (zone.id === "wreck" && !view.boat.seen) searchLabel = "Identify wreck";
-      else if (zone.monument) searchLabel = "Search " + zone.monument.name;
-      add(searchLabel, view.actions.explore, { type: "explore" }, "small-button", function (btn) {
-        if (zone.monument) {
-          var searchGlyph = monumentGlyph(zone.monument.id, "ex-glyph-btn");
-          if (searchGlyph) btn.prepend(searchGlyph);
-        }
-      });
+      else if (zone.id === "wreck") searchLabel = "Search wreck";
+      add(searchLabel, view.actions.explore, { type: "explore" });
     }
 
     if (view.actions.install.ok) {
@@ -636,7 +631,6 @@
 
       var chips = make("div", "ex-chips");
       if (zone.claimed && !zone.isHere) chips.append(make("span", "ex-chip ex-chip-claimed", "Claimed"));
-      if (canRecall && !zone.isHere && !zone.adjacent) chips.append(make("span", "ex-chip ex-chip-recall", "Recall"));
       if (chips.childNodes.length) cell.append(chips);
 
       if (zone.isHere) {
@@ -717,7 +711,9 @@
     var box = $("inventory");
     box.replaceChildren();
     game.RESOURCES.forEach(function (key) {
-      box.append(invChip(key, view.inventory[key], key));
+      var amount = view.inventory[key];
+      if (!amount) return;
+      box.append(invChip(key, amount, key));
     });
     box.append(invChip("pack", view.carried + "/" + view.cap, "Pack"));
     if (view.hatchet) box.append(invChip("hatchet", 1, "Hatchet", "is-tool"));
