@@ -73,7 +73,7 @@ describe("art glyphs", () => {
     assert.match(cssSrc, /\.portrait-plate\.shape-1x1/);
     assert.match(cssSrc, /\.portrait-plate\.shape-2x2/);
     assert.match(uiSrc, /if \(shape === "none"\) \{/);
-    assert.match(uiSrc, /portrait-ascii/);
+    assert.match(htmlSrc, /portrait-ascii/);
   });
 });
 

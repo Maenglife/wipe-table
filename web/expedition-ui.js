@@ -342,9 +342,6 @@
     }
     plate.append(svg);
     wrap.append(plate);
-    if (shape === "none") {
-      wrap.append(make("pre", "portrait-ascii", game.portraitLines(state).join("\n")));
-    }
     var outposts = Object.keys(base.outposts || {});
     if (outposts.length) {
       wrap.append(make("p", "help", "Outposts at " + outposts.map(function (id) {
