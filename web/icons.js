@@ -219,11 +219,62 @@
     },
   };
 
+  function zoneSvg(body, label) {
+    return (
+      '<svg class="ex-stamp-svg" viewBox="0 0 64 64" role="img" aria-label="' +
+      label +
+      '" xmlns="http://www.w3.org/2000/svg">' +
+      body +
+      "</svg>"
+    );
+  }
+
+  var ZONE_STAMPS = {
+    camp: function (n) {
+      return zoneSvg(
+        '<rect x="12" y="30" width="40" height="16" rx="2"/><rect x="14" y="24" width="14" height="8" rx="3"/><path d="M16 46v8M48 46v8" fill="none" stroke="currentColor" stroke-width="3"/>',
+        n
+      );
+    },
+    wreck: function (n) {
+      return zoneSvg(
+        '<path d="M10 46c8-20 36-20 44 0" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 44c5-12 23-12 28 0" fill="none" stroke="currentColor" stroke-width="2"/><path d="M32 16v30M22 22v24M42 22v24" fill="none" stroke="currentColor" stroke-width="2.5"/>',
+        n
+      );
+    },
+    woods: function (n) {
+      return zoneSvg(
+        '<path d="M20 54V42H12l9-11h-6L24 14l9 17h-6l9 11h-8v12z"/><path d="M44 54V44h-6l7-9h-5l9-13 9 13h-5l7 9h-6v10z"/>',
+        n
+      );
+    },
+    ridge: function (n) {
+      return zoneSvg('<path d="M6 50l18-30 10 14 8-18 16 34H6z"/><path d="M22 50l8-14 6 8" fill="none" stroke="currentColor" stroke-width="2"/>', n);
+    },
+    industrial: function (n) {
+      return zoneSvg(
+        '<path d="M10 30h30v20H10z"/><path d="M10 30l15-12 15 12"/><path d="M46 22v28M54 22v28M46 30h8M46 38h8M46 46h8" fill="none" stroke="currentColor" stroke-width="3"/>',
+        n
+      );
+    },
+    far: function (n) {
+      return zoneSvg(
+        '<path d="M8 50l18-32 8 12 10-18 14 38H8z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="16" r="3.5"/>',
+        n
+      );
+    },
+  };
+
   function cardIcon(card) {
     var key = (card && card.icon) || "mark";
     var draw = ICONS[key] || ICONS.mark;
     return draw(card && card.name ? card.name : "Card");
   }
 
-  root.WipeIcons = { cardIcon: cardIcon, ICONS: ICONS };
+  function zoneStamp(zoneId, name) {
+    var draw = ZONE_STAMPS[zoneId];
+    return draw ? draw(name || zoneId) : "";
+  }
+
+  root.WipeIcons = { cardIcon: cardIcon, ICONS: ICONS, zoneStamp: zoneStamp, ZONE_STAMPS: ZONE_STAMPS };
 })(typeof self !== "undefined" ? self : this);
