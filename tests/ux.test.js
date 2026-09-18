@@ -45,7 +45,7 @@ describe("map presentation", () => {
     assert.match(uiSrc, /is-icon/);
     assert.match(uiSrc, /ex-zone-caption/);
     assert.match(uiSrc, /ex-stamp/);
-    assert.match(uiSrc, /iconTile = zone\.isHere \|\| canMove/);
+    assert.match(uiSrc, /iconTile = zone\.isHere \|\| canMove \|\| canRecall \|\| zone\.id === "wreck"/);
   });
 
   it("keeps Spike/Crane monument stamps and skips duplicate names", () => {
@@ -71,21 +71,62 @@ describe("map presentation", () => {
     assert.match(cssSrc, /\.ex-zone\.is-walkable\s*\{[^}]*box-shadow:\s*none/s);
     assert.doesNotMatch(cssSrc, /0 0 18px rgba\(212, 120, 46/);
     assert.match(uiSrc, /ex-path-line/);
-    assert.match(uiSrc, /addActionButton\(actions, "Walk"/);
-    assert.match(uiSrc, /addActionButton\(actions, "Recall"/);
+    assert.match(uiSrc, /function activateZone/);
+    assert.match(uiSrc, /zone\.move\.ok && zone\.adjacent/);
+    assert.match(uiSrc, /zone\.recall\.ok/);
+    assert.doesNotMatch(uiSrc, /addActionButton\(actions, "Walk"/);
+    assert.doesNotMatch(uiSrc, /addActionButton\(actions, "Recall"/);
   });
 });
 
-describe("legal-only action strip", () => {
-  it("shows available verbs and collapses the rest under Why not with visible reasons", () => {
-    assert.match(uiSrc, /Available now/);
-    assert.match(uiSrc, /Why not/);
-    assert.match(uiSrc, /why-not-reason/);
-    assert.match(cssSrc, /\.why-not/);
-    assert.match(uiSrc, /blocked\.forEach/);
-    assert.match(uiSrc, /item\.check\.reason/);
-    assert.doesNotMatch(uiSrc, /field-label", "Gather"/);
-    assert.doesNotMatch(uiSrc, /Search & leave/);
+describe("board-first expedition", () => {
+  it("retires the page-wide Actions dump", () => {
+    const table = htmlSrc.split('id="table"')[1].split("id=\"endDialog\"")[0];
+    assert.doesNotMatch(table, /id="actionBox"/);
+    assert.doesNotMatch(table, /id="actionsHeading"/);
+    assert.doesNotMatch(table, /id="actions"/);
+    assert.doesNotMatch(table, /expedition-actions/);
+    assert.doesNotMatch(uiSrc, /Available now/);
+    assert.doesNotMatch(uiSrc, /Why not/);
+    assert.doesNotMatch(uiSrc, /why-not-reason/);
+    assert.doesNotMatch(uiSrc, /function renderActions/);
+    assert.match(htmlSrc, /id="endDayBtn"/);
+  });
+
+  it("glues 1–3 legal acts to the HERE tile and a one-line reason", () => {
+    assert.match(uiSrc, /function hereActs/);
+    assert.match(uiSrc, /ex-tile-acts/);
+    assert.match(uiSrc, /ex-tile-reason/);
+    assert.match(uiSrc, /acts\.length > 3/);
+    assert.match(uiSrc, /Drop 1×1/);
+    assert.match(uiSrc, /Identify wreck/);
+    assert.match(uiSrc, /Take " \+ resource/);
+    assert.match(cssSrc, /\.ex-tile-acts/);
+    assert.match(cssSrc, /\.ex-tile-reason/);
+  });
+
+  it("walks adjacent clicks, recalls claimed beds, and ignores distant chrome", () => {
+    assert.match(uiSrc, /if \(zone\.move\.ok && zone\.adjacent\)/);
+    assert.match(uiSrc, /if \(zone\.recall\.ok\)/);
+    assert.match(uiSrc, /addActionButton\(recallActs, "Recall"/);
+    assert.match(uiSrc, /if \(chromeOnly\) return;/);
+    assert.match(uiSrc, /event\.key !== "Enter"/);
+    assert.match(uiSrc, /\.ex-tile-acts button/);
+  });
+
+  it("puts pack chips on the portrait edge and skiff pips on wreck", () => {
+    assert.match(htmlSrc, /class="inv-rail"/);
+    assert.match(htmlSrc, /portrait-stack/);
+    assert.match(uiSrc, /function invChip/);
+    assert.match(iconSrc, /RESOURCE_MARKS/);
+    assert.match(iconSrc, /resourceMark/);
+    assert.match(cssSrc, /\.inv-rail/);
+    assert.match(cssSrc, /\.inv-chip/);
+    assert.match(uiSrc, /function renderWreckSkiff/);
+    assert.match(uiSrc, /ex-skiff/);
+    assert.match(uiSrc, /type: "extract"/);
+    assert.match(htmlSrc, /id="growBox"/);
+    assert.match(uiSrc, /grow-base/);
   });
 });
 

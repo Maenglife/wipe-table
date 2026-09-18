@@ -4,6 +4,13 @@
 python3 -m http.server 43123 --directory web
 ```
 
+Windows (either works):
+
+```bash
+python -m http.server 43123 --directory web
+py -m http.server 43123 --directory web
+```
+
 Open http://127.0.0.1:43123/ and **Play the expedition**. Unofficial fan project — not Facepunch.
 
 ## What a wipe is
